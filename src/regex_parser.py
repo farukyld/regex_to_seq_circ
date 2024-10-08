@@ -1,51 +1,38 @@
 import pyparsing as pp
 
 
-reg_exp = pp.Forward()
+def repetition_action(tokens_or_ast_node):
+  pass
 
 
-paranthese_depth = 0
+def concatenation_action(tokens_or_ast_node):
+  pass
 
 
-def increment_paranthese_depth():
-  global paranthese_depth
-  paranthese_depth = paranthese_depth + 1
-  return paranthese_depth
+def union_action(tokens_or_ast_node):
+  pass
 
-def decrement_paranthese_depth():
-  global paranthese_depth
-  return_val = paranthese_depth
-  paranthese_depth = paranthese_depth - 1
-  return return_val
-
-def also_return_a_floating_value():
-  return 1.2
 
 character_exp = pp.Word(pp.alphanums, exact=1)
 
-open_paranthese = pp.Literal("(")
+union = "|"
+concatenation = ";"
+repetition = pp.one_of("* + ?")
 
-close_paranthese = pp.Literal(")")
-
-paranthese_exp = open_paranthese + reg_exp + close_paranthese
-
-# these two creates infinity recursion
-# union_exp = reg_exp + "|" + reg_exp
-# concat_exp = reg_exp + ";" + reg_exp
-
-union_exp = pp.infix_notation()
-
-# zero_or_more_exp = reg_exp + "*"
-# one_or_more_exp = reg_exp + "+"
-# zero_or_one_exp = reg_exp + "?"
-reg_exp <<= paranthese_exp | character_exp
-
-# reg_exp <<= (character_exp | union_exp | paranthese_exp | concat_exp
-#  | zero_or_one_exp | one_or_more_exp | zero_or_one_exp)
+reg_exp = pp.infix_notation(
+    character_exp,
+    [
+        (repetition, 1, pp.opAssoc.LEFT, repetition_action),
+        (concatenation, 2, pp.opAssoc.LEFT, concatenation_action),
+        (None, 2, pp.opAssoc.LEFT, concatenation_action),
+        (union, 2, pp.opAssoc.LEFT, union_action)
+    ]
+)
 
 
 test_cases = [
     "a",
+    "aa",
     "(a)",
     "a|b",
     "a;b",
