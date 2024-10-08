@@ -22,26 +22,19 @@ def also_return_a_floating_value():
   return 1.2
 
 character_exp = pp.Word(pp.alphanums, exact=1)
-character_exp.add_parse_action(lambda: print("parsing a character_exp"))
 
 open_paranthese = pp.Literal("(")
-open_paranthese.add_parse_action(also_return_a_floating_value)
-open_paranthese.add_parse_action(increment_paranthese_depth)
-open_paranthese.add_parse_action(lambda: print("an open paranthese"))
 
 close_paranthese = pp.Literal(")")
-close_paranthese.add_parse_action(decrement_paranthese_depth)
-close_paranthese.add_parse_action(also_return_a_floating_value)
-close_paranthese.add_parse_action(lambda: print("a close paranthese"))
-
 
 paranthese_exp = open_paranthese + reg_exp + close_paranthese
 
-
-paranthese_exp.add_parse_action(lambda: print("parsing a paranthese_exp"))
-
+# these two creates infinity recursion
 # union_exp = reg_exp + "|" + reg_exp
 # concat_exp = reg_exp + ";" + reg_exp
+
+union_exp = pp.infix_notation()
+
 # zero_or_more_exp = reg_exp + "*"
 # one_or_more_exp = reg_exp + "+"
 # zero_or_one_exp = reg_exp + "?"
