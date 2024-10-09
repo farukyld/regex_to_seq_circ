@@ -1,5 +1,7 @@
 from enum import Enum, auto
 
+# I had help from chatGPT to improve this code:
+# https://chatgpt.com/share/6706e5f1-5f24-800f-9901-058cce09d736
 
 class OperationType(Enum):
   # a
