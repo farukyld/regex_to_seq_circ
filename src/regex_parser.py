@@ -2,7 +2,7 @@ import pyparsing as pp
 from regex_ast_node import RegexASTNode
 
 
-no_action = 1
+no_action = 0
 
 
 def repetition_action(tokens_or_ast_nodes):
@@ -20,7 +20,6 @@ def binary_op_action(tokens_or_ast_nodes):
   # a  b  c
   # I convert this into a tree that each
   # node has at most 2 children
-  # see:
 
   # skip every other element, even indexes are nodes, odd indexes are operators
   nodes = tokens_or_ast_nodes[0][::2]
@@ -74,12 +73,14 @@ else:
 
 
 test_cases = [
+    "a|a|a|a|a",
     "a",
     "(a)",
     "a*",
     "a+",
     "a?",
     "a|b;c",
+    "a|b|c",
     "a;b|c",
     "a+;b+",
     "a+;b*",
@@ -90,14 +91,22 @@ test_cases = [
     "a?;b?",
     "a?;b+",
     "a?;b*",
-
     "a|b",
     "a;b",
     "a;(a|b)*",
     "(a;b|b)*;b+;a?",
 ]
 
+
+if not no_action:
+  test_results = {}
 for test_case in test_cases:
   print("test case: ", test_case)
   parse_result = reg_exp.parse_string(test_case)
-  print(parse_result)
+  if no_action:
+    print(parse_result[0])
+  else:
+    test_results[test_case] = parse_result[0]
+
+if not no_action:
+  print("done")
