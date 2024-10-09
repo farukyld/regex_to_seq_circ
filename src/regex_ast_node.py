@@ -26,12 +26,8 @@ class IncorrectInitialization(Exception):
 
 
 class RegexASTNode:
-  pass
-
-
-class RegexASTNode:
-  def __init__(self, operation, left: RegexASTNode = None,
-               right: RegexASTNode = None, char: str = None, position: int = None):
+  def __init__(self, operation, left: 'RegexASTNode' = None,
+               right: 'RegexASTNode' = None, char: str = None, position: int = None):
     """_summary_
 
     Args:
