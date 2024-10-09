@@ -49,7 +49,8 @@ class RegexASTNode:
             "literal must not have left or right operands")
       if char == None or position == None:
         raise IncorrectInitialization("literal must have char and position")
-
+      if len(char) != 1:
+        raise IncorrectInitialization("char literal should be lenth of zero")
     if operation == OperationType.CONCAT or operation == OperationType.UNION:
       if left == None or right == None:
         raise IncorrectInitialization(
