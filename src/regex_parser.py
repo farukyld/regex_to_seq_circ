@@ -6,22 +6,39 @@ no_action = 1
 
 
 def repetition_action(tokens_or_ast_nodes):
-  if isinstance(tokens_or_ast_nodes[0],RegexASTNode):
-    ast_node = tokens_or_ast_nodes[0]
-    operator = tokens_or_ast_nodes[1]
-    print("repetition, tokens[0] is instance Node")
-  else:
-    ast_node = tokens_or_ast_nodes[0][0]
-    operator = tokens_or_ast_nodes[0][1]
-    print("repetition, tokens[0] is NOT instance Node")
+  ast_node = tokens_or_ast_nodes[0][0]
+  operator = tokens_or_ast_nodes[0][1]
   return RegexASTNode.from_repetition(ast_node, operator)
 
 
 def binary_op_action(tokens_or_ast_nodes):
-  left = tokens_or_ast_nodes[0][0]
+  # unfortunately, pyparsing doesn't create
+  # a left associative decomposition of a;b;c
+  # instead, it generates a shallow decomposition:
+  #    ;
+  #  / | \
+  # a  b  c
+  # I convert this into a tree that each
+  # node has at most 2 children
+  # see:
+
+  # skip every other element, even indexes are nodes, odd indexes are operators
+  nodes = tokens_or_ast_nodes[0][::2]
   op = tokens_or_ast_nodes[0][1]
-  right = tokens_or_ast_nodes[0][2]
-  return RegexASTNode.from_binary(left, right, op)
+
+  def fold(nodes: list[RegexASTNode]):
+    return [RegexASTNode.from_binary(l, r, op)
+            for l, r in zip(nodes[::2], nodes[1::2])]
+
+  while len(nodes) >= 2:
+    if len(nodes) % 2 == 0:
+      nodes = fold(nodes)
+    else:
+      excess = nodes.pop()
+      nodes = fold(nodes)
+      nodes.append(excess)
+
+  return nodes[0]
 
 
 def character_action(tokens_or_ast_nodes):
