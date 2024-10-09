@@ -66,9 +66,41 @@ class RegexASTNode:
       if right != None or char != None or position != None:
         raise IncorrectInitialization(
             "unary operations must not have right operand or char or position field to be initialized.")
-    
+
     self.operation = operation
     self.char = char
     self.position = position
     self.left = left
     self.right = right
+
+  _literals_created = 0
+
+  @classmethod
+  def from_literal(cls, char: str):
+    cls._literals_created = cls._literals_created + 1
+    return cls(operation=OperationType.LITERAL, char=char, position=cls._literals_created)
+
+  @classmethod
+  def from_binary(cls, left: 'RegexASTNode', right: 'RegexASTNode', op: str):
+    operations = {
+        '|': OperationType.UNION,
+        ';': OperationType.CONCAT
+    }
+    return cls(operation=operations[op], left=left, right=right)
+
+  @classmethod
+  def from_repetition(cls, left: 'RegexASTNode', op: str):
+    operations = {
+        '*': OperationType.ZER_MOR,
+        '+': OperationType.ONE_MOR,
+        '?': OperationType.ZER_ONE
+    }
+    return cls(operation=operations[op], left=left)
+
+  @classmethod
+  def from_one_or_more(cls, left: 'RegexASTNode'):
+    return cls(operation=OperationType.ONE_MOR, left=left)
+
+  @classmethod
+  def from_zero_or_one(cls, left: 'RegexASTNode'):
+    return cls(operation=OperationType.ZER_ONE, left=left)
