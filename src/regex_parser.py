@@ -2,7 +2,7 @@ import pyparsing as pp
 from regex_ast_node import RegexASTNode
 
 
-no_action = 0
+no_action = False
 
 
 def repetition_action(tokens_or_ast_nodes):
