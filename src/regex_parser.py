@@ -2,9 +2,6 @@ import pyparsing as pp
 from regex_ast_node import RegexASTNode
 
 
-no_action = False
-
-
 def repetition_action(tokens_or_ast_nodes):
   ast_node = tokens_or_ast_nodes[0][0]
   operator = tokens_or_ast_nodes[0][1]
@@ -45,74 +42,64 @@ def character_action(tokens_or_ast_nodes):
 
 
 character_exp = pp.Word(pp.alphanums, exact=1)
-if not no_action:
-  character_exp.add_parse_action(character_action)
+character_exp.add_parse_action(character_action)
 
 union = "|"
 concatenation = ";"
 repetition = pp.one_of("* + ?")
 
-if no_action:
-  reg_exp = pp.infix_notation(
-      character_exp,
-      [
-          (repetition, 1, pp.opAssoc.LEFT),
-          (concatenation, 2, pp.opAssoc.LEFT),
-          (union, 2, pp.opAssoc.LEFT),
-      ]
-  )
-else:
-  reg_exp = pp.infix_notation(
-      character_exp,
-      [
-          (repetition, 1, pp.opAssoc.LEFT, repetition_action),
-          (concatenation, 2, pp.opAssoc.LEFT, binary_op_action),
-          (union, 2, pp.opAssoc.LEFT, binary_op_action),
-      ]
-  )
+reg_exp = pp.infix_notation(
+    character_exp,
+    [
+        (repetition, 1, pp.opAssoc.LEFT, repetition_action),
+        (concatenation, 2, pp.opAssoc.LEFT, binary_op_action),
+        (union, 2, pp.opAssoc.LEFT, binary_op_action),
+    ]
+)
 
 # see: https://chatgpt.com/share/6707a7b0-3b8c-800f-9754-eb98f105c56f
-if not no_action:
-  line_start = pp.LineStart()
-  line_start.add_parse_action(RegexASTNode.reset_class_variables)
-  reg_exp = line_start + reg_exp
+line_start = pp.LineStart()
+line_start.add_parse_action(RegexASTNode.reset_class_variables)
+reg_exp = line_start + reg_exp
 
+# for debugging
+if __name__ == "__main__":
+  test_cases = [
+      "a?",
+      "(a;b|b)*;b;a",
+      "a|a|a|a|a",
+      "a",
+      "(a)",
+      "a*",
+      "a+",
+      "a?",
+      "a|b;c",
+      "a|b|c",
+      "a;b|c",
+      "a+;b+",
+      "a+;b*",
+      "a+;b?",
+      "a*;b*",
+      "a*;b+",
+      "a*;b?",
+      "a?;b?",
+      "a?;b+",
+      "a?;b*",
+      "a|b",
+      "a;b",
+      "a;(a|b)*",
+      "(a;b|b)*;b+;a?",
+  ]
 
-test_cases = [
-    "a|a|a|a|a",
-    "a",
-    "(a)",
-    "a*",
-    "a+",
-    "a?",
-    "a|b;c",
-    "a|b|c",
-    "a;b|c",
-    "a+;b+",
-    "a+;b*",
-    "a+;b?",
-    "a*;b*",
-    "a*;b+",
-    "a*;b?",
-    "a?;b?",
-    "a?;b+",
-    "a?;b*",
-    "a|b",
-    "a;b",
-    "a;(a|b)*",
-    "(a;b|b)*;b+;a?",
-]
-
-
-if not no_action:
   test_results = {}
-for test_case in test_cases:
-  print("test case: ", test_case)
-  parse_result = reg_exp.parse_string(test_case)
-  if no_action:
-    print(parse_result[0])
-  else:
+  for test_case in test_cases:
+    print("test case: ", test_case)
+    parse_result = reg_exp.parse_string(test_case)
     test_results[test_case] = parse_result[0]
 
-if not no_action:
+  trig_E_1 = RegexASTNode.calculate_trig(
+      test_results["(a;b|b)*;b;a"], frozenset({1}))
+  trig_E_0 = RegexASTNode.calculate_trig(
+      test_results["(a;b|b)*;b;a"], frozenset({0}))
+
   print("done")
