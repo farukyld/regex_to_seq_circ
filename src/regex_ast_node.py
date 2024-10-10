@@ -162,7 +162,8 @@ class RegexASTNode:
     self.right = right
     # TODO hic bir zaman python oop'yi anlayamayacagim.
     # see: https://chatgpt.com/share/6707ab2d-4f50-800f-bd11-1e8b20f91742
-    # can we pass incompletely initalized object self to a method?
+    # can we pass incompletely initalized object self to a method? 
+    # yes. see: https://chatgpt.com/share/6707b078-3528-800f-b912-b78adfa310fc
     self.skip: bool = RegexASTNode.calculate_skip(self)
     self.out: set[int] = RegexASTNode.calculate_out(self)
     # self.trig: set[tuple[int, str, set[int]]
