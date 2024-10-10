@@ -106,3 +106,8 @@ class RegexASTNode:
   @classmethod
   def from_zero_or_one(cls, left: 'RegexASTNode'):
     return cls(operation=OperationType.ZER_ONE, left=left)
+
+  @classmethod
+  def reset_class_variables(cls):
+    cls._literals_created  = 0
+

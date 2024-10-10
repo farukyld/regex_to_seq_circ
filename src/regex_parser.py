@@ -72,6 +72,12 @@ else:
   )
 
 
+if not no_action:
+  line_start = pp.LineStart()
+  line_start.add_parse_action(RegexASTNode.reset_class_variables)
+  reg_exp = line_start + reg_exp
+
+
 test_cases = [
     "a|a|a|a|a",
     "a",
