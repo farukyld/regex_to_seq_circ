@@ -162,3 +162,18 @@ class RegexASTNode:
     self.out: frozenset[int] = RegexASTNode.calculate_out(self)
     self.trig: set[tuple[int, str, frozenset[int]]
                    ] = RegexASTNode.calculate_trig(self)
+
+
+# for debugging
+if __name__ == "__main__":
+  literal1 = RegexASTNode.from_literal('a')
+  literal2 = RegexASTNode.from_literal('b')
+  literal3 = RegexASTNode.from_literal('b')
+  literal4 = RegexASTNode.from_literal('b')
+  literal5 = RegexASTNode.from_literal('a')
+  concat1 = RegexASTNode.from_binary(literal1, literal2, ';')
+  union1 = RegexASTNode.from_binary(concat1, literal3, '|')
+  zero_or_more1 = RegexASTNode.from_repetition(union1, '*')
+  concat2 = RegexASTNode.from_binary(zero_or_more1, literal4, ';')
+  concat3 = RegexASTNode.from_binary(concat2, literal5, ';')
+  print("done")
