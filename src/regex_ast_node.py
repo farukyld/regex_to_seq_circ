@@ -3,6 +3,7 @@ from enum import Enum, auto
 # I had help from chatGPT to improve this code:
 # https://chatgpt.com/share/6706e5f1-5f24-800f-9901-058cce09d736
 
+
 class OperationType(Enum):
   # a
   LITERAL = auto()
@@ -28,6 +29,91 @@ class IncorrectInitialization(Exception):
 
 
 class RegexASTNode:
+
+  _literals_created = 0
+
+  @classmethod
+  def from_literal(cls, char: str):
+    cls._literals_created = cls._literals_created + 1
+    return cls(operation=OperationType.LITERAL, char=char, position=cls._literals_created)
+
+  @classmethod
+  def from_binary(cls, left: 'RegexASTNode', right: 'RegexASTNode', op: str):
+    operations = {
+        '|': OperationType.UNION,
+        ';': OperationType.CONCAT
+    }
+    return cls(operation=operations[op], left=left, right=right)
+
+  @classmethod
+  def from_repetition(cls, left: 'RegexASTNode', op: str):
+    operations = {
+        '*': OperationType.ZER_MOR,
+        '+': OperationType.ONE_MOR,
+        '?': OperationType.ZER_ONE
+    }
+    return cls(operation=operations[op], left=left)
+
+  @classmethod
+  def from_one_or_more(cls, left: 'RegexASTNode'):
+    return cls(operation=OperationType.ONE_MOR, left=left)
+
+  @classmethod
+  def from_zero_or_one(cls, left: 'RegexASTNode'):
+    return cls(operation=OperationType.ZER_ONE, left=left)
+
+  @classmethod
+  def reset_class_variables(cls):
+    cls._literals_created = 0
+
+  @staticmethod
+  def calculate_skip(node: 'RegexASTNode') -> bool:
+    if node.operation == OperationType.LITERAL:
+      return False
+    elif node.operation == OperationType.UNION:
+      return node.left.skip or node.right.skip
+    elif node.operation == OperationType.CONCAT:
+      return node.left.skip and node.right.skip
+    elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ZER_ONE:
+      return True
+    elif node.operation == OperationType.ONE_MOR:
+      return node.left.skip
+
+  @staticmethod
+  def calculate_out(node: 'RegexASTNode') -> set[int]:
+    if node.operation == OperationType.LITERAL:
+      return {node.position}
+    elif node.operation == OperationType.UNION:
+      return node.left.out.union(node.right.out)
+    elif node.operation == OperationType.CONCAT:
+      # TODO check if this needs to be copy
+      return node.left.out.union(
+          node.right.out) if node.right.skip else node.right.out.copy()
+    elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ZER_ONE or node.operation == OperationType.ONE_MOR:
+      # TODO check if this needs to be copy
+      return node.left.out.copy()
+
+  # TODO check if h needs to be set to {0} as default
+  @staticmethod
+  def calculate_trig(node: 'RegexASTNode', h: set[int] = {0}) -> set[tuple[int, str, set[int]]]:
+    if node.operation == OperationType.LITERAL:
+      node.trig = {(node.position, node.char, h)}
+    elif node.operation == OperationType.UNION:
+      node.trig = RegexASTNode.calculate_trig(node.left, h).union(
+          RegexASTNode.calculate_trig(node.right, h))
+    elif node.operation == OperationType.CONCAT:
+      # TODO check if this needs to be copy
+      right_trig_h = node.left.out.union(
+          h) if node.left.skip else node.left.out
+      node.trig = RegexASTNode.calculate_trig(node.left, h).union(
+          RegexASTNode.calculate_trig(node.right, right_trig_h))
+    elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ONE_MOR:
+      # TODO check if this needs to be copy
+      node.trig = RegexASTNode.calculate_trig(
+          node.left, node.left.out.union(h))
+    elif node.operation == OperationType.ZER_ONE:
+      node.trig = RegexASTNode.calculate_trig(node.left, h)
+
   def __init__(self, operation, left: 'RegexASTNode' = None,
                right: 'RegexASTNode' = None, char: str = None, position: int = None):
     """_summary_
@@ -74,40 +160,10 @@ class RegexASTNode:
     self.position = position
     self.left = left
     self.right = right
-
-  _literals_created = 0
-
-  @classmethod
-  def from_literal(cls, char: str):
-    cls._literals_created = cls._literals_created + 1
-    return cls(operation=OperationType.LITERAL, char=char, position=cls._literals_created)
-
-  @classmethod
-  def from_binary(cls, left: 'RegexASTNode', right: 'RegexASTNode', op: str):
-    operations = {
-        '|': OperationType.UNION,
-        ';': OperationType.CONCAT
-    }
-    return cls(operation=operations[op], left=left, right=right)
-
-  @classmethod
-  def from_repetition(cls, left: 'RegexASTNode', op: str):
-    operations = {
-        '*': OperationType.ZER_MOR,
-        '+': OperationType.ONE_MOR,
-        '?': OperationType.ZER_ONE
-    }
-    return cls(operation=operations[op], left=left)
-
-  @classmethod
-  def from_one_or_more(cls, left: 'RegexASTNode'):
-    return cls(operation=OperationType.ONE_MOR, left=left)
-
-  @classmethod
-  def from_zero_or_one(cls, left: 'RegexASTNode'):
-    return cls(operation=OperationType.ZER_ONE, left=left)
-
-  @classmethod
-  def reset_class_variables(cls):
-    cls._literals_created  = 0
-
+    # TODO hic bir zaman python oop'yi anlayamayacagim.
+    # see: https://chatgpt.com/share/6707ab2d-4f50-800f-bd11-1e8b20f91742
+    # can we pass incompletely initalized object self to a method?
+    self.skip: bool = RegexASTNode.calculate_skip(self)
+    self.out: set[int] = RegexASTNode.calculate_out(self)
+    self.trig: set[tuple[int, str, set[int]]
+                   ] = RegexASTNode.calculate_trig(self)
