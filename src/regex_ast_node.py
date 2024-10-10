@@ -80,9 +80,9 @@ class RegexASTNode:
       return node.left.skip
 
   @staticmethod
-  def calculate_out(node: 'RegexASTNode') -> set[int]:
+  def calculate_out(node: 'RegexASTNode') -> frozenset[int]:
     if node.operation == OperationType.LITERAL:
-      return {node.position}
+      return frozenset({node.position})
     elif node.operation == OperationType.UNION:
       return node.left.out.union(node.right.out)
     elif node.operation == OperationType.CONCAT:
@@ -93,26 +93,28 @@ class RegexASTNode:
       # TODO check if this needs to be copy
       return node.left.out.copy()
 
-  # # TODO check if h needs to be set to {0} as default
-  # @staticmethod
-  # def calculate_trig(node: 'RegexASTNode', h: set[int] = {0}) -> set[tuple[int, str, set[int]]]:
-  #   if node.operation == OperationType.LITERAL:
-  #     node.trig = {(node.position, node.char, h)}
-  #   elif node.operation == OperationType.UNION:
-  #     node.trig = RegexASTNode.calculate_trig(node.left, h).union(
-  #         RegexASTNode.calculate_trig(node.right, h))
-  #   elif node.operation == OperationType.CONCAT:
-  #     # TODO check if this needs to be copy
-  #     right_trig_h = node.left.out.union(
-  #         h) if node.left.skip else node.left.out
-  #     node.trig = RegexASTNode.calculate_trig(node.left, h).union(
-  #         RegexASTNode.calculate_trig(node.right, right_trig_h))
-  #   elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ONE_MOR:
-  #     # TODO check if this needs to be copy
-  #     node.trig = RegexASTNode.calculate_trig(
-  #         node.left, node.left.out.union(h))
-  #   elif node.operation == OperationType.ZER_ONE:
-  #     node.trig = RegexASTNode.calculate_trig(node.left, h)
+  # TODO check if h needs to be set to {0} as default
+  @staticmethod
+  def calculate_trig(node: 'RegexASTNode', h: frozenset[int] = frozenset({0})) -> set[tuple[int, str, frozenset[int]]]:
+    if not isinstance(h, frozenset):
+      raise TypeError("h must be type of frozenset")
+
+    if node.operation == OperationType.LITERAL:
+      return {(node.position, node.char, h)}
+    elif node.operation == OperationType.UNION:
+      return RegexASTNode.calculate_trig(node.left, h).union(
+          RegexASTNode.calculate_trig(node.right, h))
+    elif node.operation == OperationType.CONCAT:
+      # TODO check if this needs to be copy
+      right_trig_h = node.left.out.union(
+          h) if node.left.skip else node.left.out
+      return RegexASTNode.calculate_trig(node.left, h).union(
+          RegexASTNode.calculate_trig(node.right, right_trig_h))
+    elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ONE_MOR:
+      # TODO check if this needs to be copy
+      return RegexASTNode.calculate_trig(node.left, node.left.out.union(h))
+    elif node.operation == OperationType.ZER_ONE:
+      return RegexASTNode.calculate_trig(node.left, h)
 
   def __init__(self, operation, left: 'RegexASTNode' = None,
                right: 'RegexASTNode' = None, char: str = None, position: int = None):
@@ -162,9 +164,9 @@ class RegexASTNode:
     self.right = right
     # TODO hic bir zaman python oop'yi anlayamayacagim.
     # see: https://chatgpt.com/share/6707ab2d-4f50-800f-bd11-1e8b20f91742
-    # can we pass incompletely initalized object self to a method? 
+    # can we pass incompletely initalized object self to a method?
     # yes. see: https://chatgpt.com/share/6707b078-3528-800f-b912-b78adfa310fc
     self.skip: bool = RegexASTNode.calculate_skip(self)
-    self.out: set[int] = RegexASTNode.calculate_out(self)
-    # self.trig: set[tuple[int, str, set[int]]
-    #                ] = RegexASTNode.calculate_trig(self)
+    self.out: frozenset[int] = RegexASTNode.calculate_out(self)
+    self.trig: set[tuple[int, str, frozenset[int]]
+                   ] = RegexASTNode.calculate_trig(self)
