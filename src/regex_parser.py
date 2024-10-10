@@ -71,7 +71,7 @@ else:
       ]
   )
 
-
+# see: https://chatgpt.com/share/6707a7b0-3b8c-800f-9754-eb98f105c56f
 if not no_action:
   line_start = pp.LineStart()
   line_start.add_parse_action(RegexASTNode.reset_class_variables)
