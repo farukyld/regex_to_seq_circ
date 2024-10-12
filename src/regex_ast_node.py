@@ -24,6 +24,18 @@ class OperationType(Enum):
   ZER_ONE = auto()
 
 
+# ask chatGPT to fix the docstring:
+# see: https://chatgpt.com/share/6709469b-8990-800f-b1c4-9d9d900b7468
+class NotSupportedConversion(Exception):
+  """
+  Exception raised when attempting to convert a
+  node to a circuit JSON, where none of the node's
+  children is in the first position of the regular
+  expression having been parsed.
+  """
+  pass
+
+
 class IncorrectInitialization(Exception):
   """
   exception raised when an instance of RegexASTNode
@@ -111,6 +123,34 @@ class RegexASTNode:
       return RegexASTNode.calculate_trig(node.left, node.left.out.union(h))
     elif node.operation == OperationType.ZER_ONE:
       return RegexASTNode.calculate_trig(node.left, h)
+
+  def circuit_json(self, full_match=True) -> str:
+    left_most_leaf = self
+    while left_most_leaf.left:
+      left_most_leaf = left_most_leaf.left
+    # since we use left child for unary operations,
+    # left-most child of a node must be a LITERAL (char)
+    # and has a globally determined position attached to it
+    # i.e. position is not relative to any of parent nodes,
+    # it is relative to the entire reg_exp having been parsed
+    if left_most_leaf.position != 1:
+      raise NotSupportedConversion(
+          "not should contain the LITERAL at the first position as its left-most children")
+
+    circuit_dict = {
+        "n_states": RegexASTNode._literals_created + 1,
+        "full_match": full_match,
+        "transitions": [
+            {
+                "to_state": i,
+                "must_read": a,
+                "from_states": list(h),
+            } for i, a, h in self.trig
+        ]
+    }
+
+    json_str = json.dumps(circuit_dict, indent=2)
+    return json_str
 
   def __init__(self, operation, left: 'RegexASTNode' = None,
                right: 'RegexASTNode' = None, char: str = None, position: int = None):
