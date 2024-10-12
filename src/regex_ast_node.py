@@ -25,6 +25,10 @@ class OperationType(Enum):
 
 
 class IncorrectInitialization(Exception):
+  """
+  exception raised when an instance of RegexASTNode
+  is tried to be initialized with wrong set of arguments
+  """
   pass
 
 
