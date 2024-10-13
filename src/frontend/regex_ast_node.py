@@ -141,6 +141,7 @@ class RegexASTNode:
     circuit_dict = {
         "n_states": RegexASTNode._literals_created + 1,
         "full_match": full_match,
+        "accept_states": list(self.out),
         "transitions": [
             {
                 "to_state": i,
