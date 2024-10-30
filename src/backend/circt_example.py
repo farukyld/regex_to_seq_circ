@@ -18,7 +18,8 @@ with Context() as ctx, Location.unknown():
   # type definition. signless (neither unsigned nor signed) 42 bits int type.
   # there are also float types and predefined operations for them.
   # signless makes sense in bitwise operations 
-  # while (un)signed does so in arithmetic and comparison operations
+  # while (un)signed does so in arithmetic and comparison operations 
+  # (I guess)
   i42 = IntegerType.get_signless(42)
 
   # this is kind of a translation unit. analog to a file (or more ?)
