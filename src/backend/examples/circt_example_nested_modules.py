@@ -45,4 +45,5 @@ with Context() as ctx, Location.unknown():
                                    ("magic_result", i32), ("other_magic_result", i32)],
                                body_builder=top_module_builder)
 
+if __name__ =="__main__":
   print(m)

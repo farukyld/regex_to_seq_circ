@@ -27,7 +27,9 @@ with Context() as ctx, Location.unknown():
   m = Module.create()
 
   # print the empty version of that translation unit.
-  print(m)
+  if __name__ =="__main__":
+    print(m)
+
 
   # where the upcoming module definitons will go.
   # insertion point target may also 
@@ -49,4 +51,7 @@ with Context() as ctx, Location.unknown():
                   input_ports=[("a", i42), ("b", i42)],
                   output_ports=[("c", i42)],
                   body_builder=magic)
+
+if __name__ =="__main__":
   print(m)
+

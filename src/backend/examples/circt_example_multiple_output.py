@@ -24,4 +24,5 @@ with Context() as ctx, Location.unknown():
         body_builder=adder_body
     )
 
+if __name__ =="__main__":
   print(m)
