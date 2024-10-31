@@ -1,6 +1,8 @@
 import circt
 from circt.ir import Context, InsertionPoint, IntegerType, Location, Module, ArrayAttr
 from circt.dialects import hw, comb
+from circt.passmanager import PassManager
+
 
 with Context() as ctx, Location.unknown():
   circt.register_dialects(ctx)
@@ -56,7 +58,6 @@ with Context() as ctx, Location.unknown():
       # output_list[output_names.index("magic_result")] = sub1_c
 
       # hw.OutputOp(output_list)
-      
 
     # # Define the top module with inputs and multiple outputs
     top_module = hw.HWModuleOp(name="top_module",
@@ -67,4 +68,7 @@ with Context() as ctx, Location.unknown():
                                    ("other_magic_result2", i32)],
                                body_builder=top_module_builder)
 
-  print(m)
+  if __name__ == "__main__":
+
+    pm = PassManager.parse("builtin.module(export-verilog)")
+    pm.run(m.operation)
