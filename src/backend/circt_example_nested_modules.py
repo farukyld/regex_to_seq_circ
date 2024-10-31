@@ -35,7 +35,8 @@ with Context() as ctx, Location.unknown():
       inst1 = magic_def.instantiate("magic_inst1", sub1_a=module.a, sub1_b=module.b)
       inst2 = other_magic_def.instantiate("magic_inst2", sub2_a=module.a, sub2_b=module.b)
       # # Connect outputs from both instances to top module output ports
-      hw.OutputOp([inst1.opview, inst2.opview])
+      # hw.OutputOp([inst1.opview, inst2.opview])
+      return {"magic_result":inst1.opview, "other_magic_result":inst2.opview}
 
     # # Define the top module with inputs and multiple outputs
     top_module = hw.HWModuleOp(name="top_module",
