@@ -22,4 +22,5 @@ system = System([OrInts], name="ExampleSystem", output_directory=ex_dir,)
 
 if __name__ == "__main__":
   print(system.body)
+  system.compile()
   pass
