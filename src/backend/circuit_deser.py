@@ -2,7 +2,7 @@
 import json
 
 
-class CircuitSerializer:
+class CircuitDeser:
   def __init__(self, n_states: int, full_match: bool, accept_states: list[int], transitions: list[tuple[int, str, frozenset]]):
     self.n_states = n_states
     self.full_match = full_match
@@ -10,7 +10,7 @@ class CircuitSerializer:
     self.accept_states = accept_states
 
   @classmethod
-  def from_json(cls, json_obj) -> 'CircuitSerializer':
+  def from_json(cls, json_obj) -> 'CircuitDeser':
     """create Circuit object from previously generated json file. <p>
       useful for naming fields 
 
@@ -32,7 +32,7 @@ class CircuitSerializer:
 
     n_states: int = json_obj["n_states"]
     full_match: bool = json_obj["full_match"]
-    accept_states: list[int] = json_obj["accept_states"]
+    accept_states: list[int] = [] # TODO: json shoud contain that. json_obj["accept_states"]
     transitions: list[dict[str, int | str |
                            list[int]]] = json_obj["transitions"]
     transition_tuples: list[tuple] = [
@@ -48,4 +48,4 @@ if __name__ == "__main__":
 
   with open("circuit_json.json", "r") as file:
     circuit_info = json.load(file)
-    circuit_obj = CircuitSerializer.from_json(circuit_info)
+    circuit_obj = CircuitDeser.from_json(circuit_info)
