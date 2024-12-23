@@ -32,7 +32,7 @@ class CircuitDeser:
 
     n_states: int = json_obj["n_states"]
     full_match: bool = json_obj["full_match"]
-    accept_states: list[int] = [] # TODO: json shoud contain that. json_obj["accept_states"]
+    accept_states: list[int] = json_obj["accept_states"]
     transitions: list[dict[str, int | str |
                            list[int]]] = json_obj["transitions"]
     transition_tuples: list[tuple] = [
