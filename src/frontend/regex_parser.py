@@ -1,6 +1,8 @@
 import pyparsing as pp
 from regex_ast_node import RegexASTNode
 
+# see: https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
+
 
 def repetition_action(tokens_or_ast_nodes):
   ast_node = tokens_or_ast_nodes[0][0]
