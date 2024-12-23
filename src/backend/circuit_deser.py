@@ -3,7 +3,7 @@ import json
 
 
 class CircuitDeser:
-  def __init__(self, n_states: int, full_match: bool, accept_states: list[int], transitions: list[tuple[int, str, frozenset]]):
+  def __init__(self, n_states: int, full_match: bool, accept_states: list[int], transitions: list[tuple[int, str, list[int]]]):
     self.n_states = n_states
     self.full_match = full_match
     self.transitions = transitions
@@ -37,7 +37,7 @@ class CircuitDeser:
                            list[int]]] = json_obj["transitions"]
     transition_tuples: list[tuple] = [
         (tr_dict["to_state"], tr_dict["must_read"],
-         frozenset(tr_dict["from_states"]))
+         tr_dict["from_states"])
         for tr_dict in transitions
     ]
 
