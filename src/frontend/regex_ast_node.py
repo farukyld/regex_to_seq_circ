@@ -1,5 +1,6 @@
 from enum import Enum, auto
 import json
+from path_shortcuts import TEST_0_JSON_PATH
 
 # I had help from chatGPT to improve this code:
 # https://chatgpt.com/share/6706e5f1-5f24-800f-9901-058cce09d736
@@ -222,7 +223,7 @@ if __name__ == "__main__":
   zero_or_more1 = RegexASTNode.from_repetition(union1, '*')
   concat2 = RegexASTNode.from_binary(zero_or_more1, literal4, ';')
   concat3 = RegexASTNode.from_binary(concat2, literal5, ';')
-  with open("circuit_json.json", "w") as file:
+  with open(TEST_0_JSON_PATH, "w") as file:
     file.write(concat3.circuit_json())
 
   print("done")
