@@ -1,6 +1,7 @@
 
 import json
 
+from path_shortcuts import TEST_0_JSON_PATH
 
 class CircuitDeser:
   def __init__(self, n_states: int, full_match: bool, accept_states: list[int], transitions: list[tuple[int, str, list[int]]]):
@@ -46,6 +47,6 @@ class CircuitDeser:
 
 if __name__ == "__main__":
 
-  with open("circuit_json.json", "r") as file:
+  with open(TEST_0_JSON_PATH, "r") as file:
     circuit_info = json.load(file)
     circuit_obj = CircuitDeser.from_json(circuit_info)
