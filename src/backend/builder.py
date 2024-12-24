@@ -13,7 +13,7 @@ from path_shortcuts import TEST_0_JSON_PATH, generate_sv_output_dir_name
 
 @modparams
 def seq_circt_builder(formal_circuit: CircuitDeser):
-  class ParametricRegister(Module):
+  class SeqCircuit(Module):
     clk = Clock()
     rst = Reset()
     y_o = Output(Bits(1))
@@ -62,7 +62,7 @@ def seq_circt_builder(formal_circuit: CircuitDeser):
       transition_functions.reverse()
       state.assign(BitsSignal.concat(transition_functions))
 
-  return ParametricRegister
+  return SeqCircuit
 
 
 def main():
