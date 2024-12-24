@@ -3,8 +3,10 @@ import json
 
 from path_shortcuts import TEST_0_JSON_PATH
 
+
 class CircuitDeser:
-  def __init__(self, n_states: int, full_match: bool, accept_states: list[int], transitions: list[tuple[int, str, list[int]]]):
+  def __init__(self, regex: str, n_states: int, full_match: bool, accept_states: list[int], transitions: list[tuple[int, str, list[int]]]):
+    self.regex = regex
     self.n_states = n_states
     self.full_match = full_match
     self.transitions = transitions
@@ -30,7 +32,7 @@ class CircuitDeser:
     #         } for i, a, h in self.trig
     #     ]
     # }
-
+    regex: str = json_obj["regex"]
     n_states: int = json_obj["n_states"]
     full_match: bool = json_obj["full_match"]
     accept_states: list[int] = json_obj["accept_states"]
@@ -42,7 +44,7 @@ class CircuitDeser:
         for tr_dict in transitions
     ]
 
-    return cls(n_states, full_match, accept_states, transition_tuples)
+    return cls(regex, n_states, full_match, accept_states, transition_tuples)
 
 
 if __name__ == "__main__":
