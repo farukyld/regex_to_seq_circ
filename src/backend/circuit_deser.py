@@ -11,7 +11,7 @@ class CircuitDeser:
     self.accept_states = accept_states
 
   @classmethod
-  def from_json(cls, json_obj) -> 'CircuitDeser':
+  def from_dict(cls, json_obj) -> 'CircuitDeser':
     """create Circuit object from previously generated json file. <p>
       useful for naming fields 
 
@@ -49,4 +49,4 @@ if __name__ == "__main__":
 
   with open(TEST_0_JSON_PATH, "r") as file:
     circuit_info = json.load(file)
-    circuit_obj = CircuitDeser.from_json(circuit_info)
+    circuit_obj = CircuitDeser.from_dict(circuit_info)

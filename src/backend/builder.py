@@ -70,7 +70,7 @@ def main():
   # Instantiate the parametric register with a bit width of 16
   with open(TEST_0_JSON_PATH, "r") as f:
     json_obj = json.load(f)
-  formal_circuit = CircuitDeser.from_json(json_obj)
+  formal_circuit = CircuitDeser.from_dict(json_obj)
   output_dir = generate_sv_output_dir_name(__file__)
   system = System([seq_circt_builder(formal_circuit)], name="seq_circuit",
                   output_directory=output_dir)

@@ -1,4 +1,3 @@
-
 # ask chatGPT to fix the docstring:
 # see: https://chatgpt.com/share/6709469b-8990-800f-b1c4-9d9d900b7468
 import json
@@ -78,7 +77,7 @@ def calculate_trig(node: RegexASTNode, h: frozenset[int] = frozenset({0})) -> se
     return calculate_trig(node.left, h)
 
 
-def circuit_json(node: RegexASTNode, full_match=True, regex="") -> str:
+def circuit_dict(node: RegexASTNode, full_match=True, regex="") -> str:
   if not isinstance(node, RegexASTNode):
     raise TypeError("node must be type of RegexASTNode")
   left_most_leaf = node
@@ -107,9 +106,7 @@ def circuit_json(node: RegexASTNode, full_match=True, regex="") -> str:
       ]
   }
 
-  json_str = json.dumps(circuit_dict, indent=2)
-  return json_str
-
+  return circuit_dict
 
 
 # for debugging
@@ -125,6 +122,6 @@ if __name__ == "__main__":
   concat2 = RegexASTNode.from_binary(zero_or_more1, literal4, ';')
   concat3 = RegexASTNode.from_binary(concat2, literal5, ';')
   with open(TEST_0_JSON_PATH, "w") as file:
-    file.write(circuit_json(concat3))
+    file.write(json.dumps(circuit_dict(concat3), indent=2))
 
   print("done")
