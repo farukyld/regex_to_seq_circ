@@ -1,5 +1,6 @@
 import pyparsing as pp
-from regex_ast_node import RegexASTNode
+from frontend.regex_ast_node import RegexASTNode
+from frontend.ast_to_formal_circuit import calculate_trig
 
 # see: https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
 
@@ -99,9 +100,9 @@ if __name__ == "__main__":
     parse_result = reg_exp.parse_string(test_case)
     test_results[test_case] = parse_result[0]
 
-  trig_E_1 = RegexASTNode.calculate_trig(
+  trig_E_1 = calculate_trig(
       test_results["(a;b|b)*;b;a"], frozenset({1}))
-  trig_E_0 = RegexASTNode.calculate_trig(
+  trig_E_0 = calculate_trig(
       test_results["(a;b|b)*;b;a"], frozenset({0}))
 
   print("done")
