@@ -72,7 +72,7 @@ def main():
     json_obj = json.load(f)
   formal_circuit = CircuitDeser.from_json(json_obj)
   output_dir = generate_sv_output_dir_name(__file__)
-  system = System([seq_circt_builder(formal_circuit)], name="param_register_system",
+  system = System([seq_circt_builder(formal_circuit)], name="seq_circuit",
                   output_directory=output_dir)
   system.compile()
 
