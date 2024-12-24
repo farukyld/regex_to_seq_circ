@@ -65,6 +65,9 @@ line_start = pp.LineStart()
 line_start.add_parse_action(RegexASTNode.reset_class_variables)
 reg_exp = line_start + reg_exp
 
+def regex_pattern_to_ast(pattern: str) -> RegexASTNode:
+  return reg_exp.parse_string(pattern)[0]
+
 # for debugging
 if __name__ == "__main__":
   test_cases = [
