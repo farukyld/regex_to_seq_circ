@@ -3,7 +3,7 @@
 import shutil
 import sys
 
-from path_shortcuts import OUTPUTS_PARENT, FINAL_OUTPUTS, OUTPUT_DIR_SUFFIX
+from path_shortcuts import OUTPUTS_PARENT, FINAL_OUTPUTS, INTER_OUTPUTS, OUTPUT_DIR_SUFFIX
 
 
 def remove_final_output_directories():
@@ -20,9 +20,13 @@ def remove_final_output_directories():
         print(f"Error removing {item}: {e}")
 
 
-def remove_all_build_content():
+def remove_all_build_content(recreate_empty_directories=True):
   for item in OUTPUTS_PARENT.iterdir():
     shutil.rmtree(item)
+  if recreate_empty_directories:
+    INTER_OUTPUTS.mkdir(parents=True, exist_ok=True)
+    FINAL_OUTPUTS.mkdir(parents=True, exist_ok=True)
+
 
 
 if __name__ == "__main__":
