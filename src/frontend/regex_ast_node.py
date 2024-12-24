@@ -1,6 +1,4 @@
 from enum import Enum, auto
-import json
-from path_shortcuts import TEST_0_JSON_PATH
 
 # I had help from chatGPT to improve this code:
 # https://chatgpt.com/share/6706e5f1-5f24-800f-9901-058cce09d736
@@ -26,18 +24,6 @@ class OperationType(Enum):
   ZER_ONE = auto()
 
 
-# ask chatGPT to fix the docstring:
-# see: https://chatgpt.com/share/6709469b-8990-800f-b1c4-9d9d900b7468
-class NotSupportedConversion(Exception):
-  """
-  Exception raised when attempting to convert a
-  node to a circuit JSON, where none of the node's
-  children is in the first position of the regular
-  expression having been parsed.
-  """
-  pass
-
-
 class IncorrectInitialization(Exception):
   """
   exception raised when an instance of RegexASTNode
@@ -52,7 +38,7 @@ class RegexASTNode:
 
   @classmethod
   def from_literal(cls, char: str):
-    cls._literals_created = cls._literals_created + 1
+    cls._literals_created += 1
     return cls(operation=OperationType.LITERAL, char=char, position=cls._literals_created)
 
   @classmethod
@@ -75,85 +61,6 @@ class RegexASTNode:
   @classmethod
   def reset_class_variables(cls):
     cls._literals_created = 0
-
-  @staticmethod
-  def calculate_skip(node: 'RegexASTNode') -> bool:
-    if node.operation == OperationType.LITERAL:
-      return False
-    elif node.operation == OperationType.UNION:
-      return node.left.skip or node.right.skip
-    elif node.operation == OperationType.CONCAT:
-      return node.left.skip and node.right.skip
-    elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ZER_ONE:
-      return True
-    elif node.operation == OperationType.ONE_MOR:
-      return node.left.skip
-
-  @staticmethod
-  def calculate_out(node: 'RegexASTNode') -> frozenset[int]:
-    if node.operation == OperationType.LITERAL:
-      return frozenset({node.position})
-    elif node.operation == OperationType.UNION:
-      return node.left.out.union(node.right.out)
-    elif node.operation == OperationType.CONCAT:
-      # TODO check if this needs to be copy
-      return node.left.out.union(
-          node.right.out) if node.right.skip else node.right.out.copy()
-    elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ZER_ONE or node.operation == OperationType.ONE_MOR:
-      # TODO check if this needs to be copy
-      return node.left.out.copy()
-
-  # TODO check if h needs to be set to {0} as default
-  @staticmethod
-  def calculate_trig(node: 'RegexASTNode', h: frozenset[int] = frozenset({0})) -> set[tuple[int, str, frozenset[int]]]:
-    if not isinstance(h, frozenset):
-      raise TypeError("h must be type of frozenset")
-
-    if node.operation == OperationType.LITERAL:
-      return {(node.position, node.char, h)}
-    elif node.operation == OperationType.UNION:
-      return RegexASTNode.calculate_trig(node.left, h).union(
-          RegexASTNode.calculate_trig(node.right, h))
-    elif node.operation == OperationType.CONCAT:
-      # TODO check if this needs to be copy
-      right_trig_h = node.left.out.union(
-          h) if node.left.skip else node.left.out
-      return RegexASTNode.calculate_trig(node.left, h).union(
-          RegexASTNode.calculate_trig(node.right, right_trig_h))
-    elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ONE_MOR:
-      # TODO check if this needs to be copy
-      return RegexASTNode.calculate_trig(node.left, node.left.out.union(h))
-    elif node.operation == OperationType.ZER_ONE:
-      return RegexASTNode.calculate_trig(node.left, h)
-
-  def circuit_json(self, full_match=True) -> str:
-    left_most_leaf = self
-    while left_most_leaf.left:
-      left_most_leaf = left_most_leaf.left
-    # since we use left child for unary operations,
-    # left-most child of a node must be a LITERAL (char)
-    # and has a globally determined position attached to it
-    # i.e. position is not relative to any of parent nodes,
-    # it is relative to the entire reg_exp having been parsed
-    if left_most_leaf.position != 1:
-      raise NotSupportedConversion(
-          "not should contain the LITERAL at the first position as its left-most children")
-
-    circuit_dict = {
-        "n_states": RegexASTNode._literals_created + 1,
-        "full_match": full_match,
-        "accept_states": list(self.out),
-        "transitions": [
-            {
-                "to_state": i,
-                "must_read": a,
-                "from_states": list(h),
-            } for i, a, h in self.trig
-        ]
-    }
-
-    json_str = json.dumps(circuit_dict, indent=2)
-    return json_str
 
   def __init__(self, operation, left: 'RegexASTNode' = None,
                right: 'RegexASTNode' = None, char: str = None, position: int = None):
@@ -201,29 +108,3 @@ class RegexASTNode:
     self.position = position
     self.left = left
     self.right = right
-    # TODO hic bir zaman python oop'yi anlayamayacagim.
-    # see: https://chatgpt.com/share/6707ab2d-4f50-800f-bd11-1e8b20f91742
-    # can we pass incompletely initalized object self to a method?
-    # yes. see: https://chatgpt.com/share/6707b078-3528-800f-b912-b78adfa310fc
-    self.skip: bool = RegexASTNode.calculate_skip(self)
-    self.out: frozenset[int] = RegexASTNode.calculate_out(self)
-    self.trig: set[tuple[int, str, frozenset[int]]
-                   ] = RegexASTNode.calculate_trig(self)
-
-
-# for debugging
-if __name__ == "__main__":
-  literal1 = RegexASTNode.from_literal('a')
-  literal2 = RegexASTNode.from_literal('b')
-  literal3 = RegexASTNode.from_literal('b')
-  literal4 = RegexASTNode.from_literal('b')
-  literal5 = RegexASTNode.from_literal('a')
-  concat1 = RegexASTNode.from_binary(literal1, literal2, ';')
-  union1 = RegexASTNode.from_binary(concat1, literal3, '|')
-  zero_or_more1 = RegexASTNode.from_repetition(union1, '*')
-  concat2 = RegexASTNode.from_binary(zero_or_more1, literal4, ';')
-  concat3 = RegexASTNode.from_binary(concat2, literal5, ';')
-  with open(TEST_0_JSON_PATH, "w") as file:
-    file.write(concat3.circuit_json())
-
-  print("done")
