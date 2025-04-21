@@ -43,14 +43,14 @@ def calculate_out(node: RegexASTNode) -> frozenset[int]:
   elif node.operation == OperationType.UNION:
     return calculate_out(node.left).union(calculate_out(node.right))
   elif node.operation == OperationType.CONCAT:
-    # TODO check if this needs to be copy
-    return calculate_out(node.left).union(
-        calculate_out(node.right)) if calculate_skip(node.right) else calculate_out(node.right).copy()
+    if calculate_skip(node.right):
+      return calculate_out(node.left).union(calculate_out(node.right))
+    else:
+      return calculate_out(node.right)
   elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ZER_ONE or node.operation == OperationType.ONE_MOR:
-    # TODO check if this needs to be copy
-    return calculate_out(node.left).copy()
+    return calculate_out(node.left)
 
-# TODO check if h needs to be set to {0} as default
+
 def calculate_trig(node: RegexASTNode, h: frozenset[int] = frozenset({0})) -> set[tuple[int, str, frozenset[int]]]:
   if not isinstance(node, RegexASTNode):
     print(type(node))
@@ -65,13 +65,13 @@ def calculate_trig(node: RegexASTNode, h: frozenset[int] = frozenset({0})) -> se
     return calculate_trig(node.left, h).union(
         calculate_trig(node.right, h))
   elif node.operation == OperationType.CONCAT:
-    # TODO check if this needs to be copy
-    right_trig_h = calculate_out(node.left).union(
-        h) if calculate_skip(node.left) else calculate_out(node.left)
+    if calculate_skip(node.left):
+      right_trig_h = calculate_out(node.left).union(h)
+    else:
+      right_trig_h = calculate_out(node.left)
     return calculate_trig(node.left, h).union(
         calculate_trig(node.right, right_trig_h))
   elif node.operation == OperationType.ZER_MOR or node.operation == OperationType.ONE_MOR:
-    # TODO check if this needs to be copy
     return calculate_trig(node.left, calculate_out(node.left).union(h))
   elif node.operation == OperationType.ZER_ONE:
     return calculate_trig(node.left, h)
