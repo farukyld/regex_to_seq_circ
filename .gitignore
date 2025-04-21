@@ -1,5 +1,5 @@
 .vscode/**
 .venv/**
 **pycache**
-**build/**
+**/build/**
 **regex_machine.egg-info
