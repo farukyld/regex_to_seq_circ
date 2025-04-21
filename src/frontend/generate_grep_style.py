@@ -73,7 +73,6 @@ def main():
   for _ in range(10):
     expr = generate_expr()
     print(expr)
-    expr += "("
     re.compile(expr)
 
 
