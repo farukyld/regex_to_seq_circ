@@ -19,8 +19,9 @@ def insert_semicolon_as_concat(s):
 
 
 def main():
-  tests = [
-  ]
+  from frontend.simple_test_cases import regexes_with_semicolon
+  # see: https://www.geeksforgeeks.org/python-deleting-all-occurrences-of-character/
+  tests = [regex.replace(';', '') for regex in regexes_with_semicolon]
   for test in tests:
     print(f"grep style: {test}, semicolon "
           f"inserted: {insert_semicolon_as_concat(test)}")
