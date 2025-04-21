@@ -2,8 +2,24 @@
 
 
 import random
+import re
 from frontend.operation_types import OperationType
 import string
+
+
+def maybe_wrap(expr, op_type):
+  PAREN_PROBABILITIES = {
+      OperationType.UNION: 0.9,
+      OperationType.CONCAT: 0.3,
+      OperationType.ZER_MOR: 0.2,
+      OperationType.ONE_MOR: 0.2,
+      OperationType.ZER_ONE: 0.2,
+      OperationType.LITERAL: 0.1,
+  }
+  prob = PAREN_PROBABILITIES.get(op_type, 0)
+  if random.random() < prob:
+    return f"({expr})"
+  return expr
 
 
 def weighted_choice(choices):
@@ -21,7 +37,7 @@ def generate_expr(max_depth=3):
   if max_depth == 0:
     return random.choice(string.ascii_letters + string.digits)
 
-  productions = [
+  PRODUCTION_WEIGHTS = [
       (OperationType.LITERAL, 20),      # More likely to stop
       (OperationType.CONCAT, 8),
       (OperationType.UNION, 8),
@@ -30,25 +46,35 @@ def generate_expr(max_depth=3):
       (OperationType.ZER_ONE, 1),
   ]
 
-  choice = weighted_choice(productions)
+  choice = weighted_choice(PRODUCTION_WEIGHTS)
 
   if choice == OperationType.LITERAL:
-    return generate_expr(max_depth-1)
+    return maybe_wrap(generate_expr(max_depth - 1),choice)
   elif choice == OperationType.UNION:
-    return f"({generate_expr(max_depth-1)}|{generate_expr(max_depth-1)})"
+    left = generate_expr(max_depth - 1)
+    right = generate_expr(max_depth - 1)
+    return maybe_wrap(f"{left}|{right}", choice)
   elif choice == OperationType.CONCAT:
-    return f"{generate_expr(max_depth-1)}{generate_expr(max_depth-1)}"
+    left = generate_expr(max_depth - 1)
+    right = generate_expr(max_depth - 1)
+    return maybe_wrap(f"{left}{right}", choice)
   elif choice == OperationType.ZER_MOR:
-    return f"{generate_expr(max_depth-1)}*"
+    inner = generate_expr(max_depth - 1)
+    return maybe_wrap(inner, choice) + "*"
   elif choice == OperationType.ONE_MOR:
-    return f"{generate_expr(max_depth-1)}+"
+    inner = generate_expr(max_depth - 1)
+    return maybe_wrap(inner, choice) + "+"
   elif choice == OperationType.ZER_ONE:
-    return f"{generate_expr(max_depth-1)}?"
+    inner = generate_expr(max_depth - 1)
+    return maybe_wrap(inner, choice) + "?"
 
 
 def main():
   for _ in range(10):
-    print(generate_expr())
+    expr = generate_expr()
+    print(expr)
+    expr += "("
+    re.compile(expr)
 
 
 if __name__ == "__main__":
