@@ -11,7 +11,7 @@ def insert_semicolon_as_concat(s):
           (prev.isalnum() or prev in ')*+?') and
           (c.isalnum() or c == '(')
       ):
-        output += '·'
+        output += ';'
     output += c
     prev = c
   return output
