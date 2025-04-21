@@ -74,6 +74,7 @@ if __name__ == "__main__":
   test_results = {}
   for test_case in regexes_with_semicolon:
     print("test case: ", test_case)
+    # see: https://chatgpt.com/share/6805cea4-1810-800f-bc56-f79c9aca6dd5
     parse_result = reg_exp.parse_string(test_case,parse_all=True)
     test_results[test_case] = parse_result[0]
 
