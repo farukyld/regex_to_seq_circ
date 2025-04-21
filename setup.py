@@ -5,5 +5,8 @@ setup(
     version="0.1",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    install_requires=[],
+    install_requires=[
+        "pyparsing==3.1.4",
+        "pycde==0.6.1",
+    ],
 )

@@ -12,7 +12,7 @@ from frontend import ast_to_formal_circuit
 from frontend import regex_parser
 from frontend import generate_grep_style
 from frontend import regex_normalizer
-from frontend import simple_test_cases
+import simple_test_cases
 import clean
 import path_shortcuts
 
