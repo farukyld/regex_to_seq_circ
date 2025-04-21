@@ -74,7 +74,7 @@ def regex_pattern_to_ast(pattern: str) -> RegexASTNode:
 
 # for debugging
 if __name__ == "__main__":
-  from src.simple_test_cases import regexes_with_semicolon
+  from simple_test_cases import regexes_with_semicolon
   test_results = {}
   for test_case in regexes_with_semicolon:
     print("test case: ", test_case)

@@ -23,7 +23,7 @@ DEF = "\033[0m"
 
 
 def main():
-  from src.simple_test_cases import regexes_with_semicolon
+  from simple_test_cases import regexes_with_semicolon
   from frontend.generate_grep_style import generate_expr
   from frontend.regex_parser import regex_pattern_to_ast
   # see: https://www.geeksforgeeks.org/python-deleting-all-occurrences-of-character/
