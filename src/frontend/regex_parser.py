@@ -70,35 +70,9 @@ def regex_pattern_to_ast(pattern: str) -> RegexASTNode:
 
 # for debugging
 if __name__ == "__main__":
-  test_cases = [
-      "a?",
-      "(a;b|b)*;b;a",
-      "a|a|a|a|a",
-      "a",
-      "(a)",
-      "a*",
-      "a+",
-      "a?",
-      "a|b;c",
-      "a|b|c",
-      "a;b|c",
-      "a+;b+",
-      "a+;b*",
-      "a+;b?",
-      "a*;b*",
-      "a*;b+",
-      "a*;b?",
-      "a?;b?",
-      "a?;b+",
-      "a?;b*",
-      "a|b",
-      "a;b",
-      "a;(a|b)*",
-      "(a;b|b)*;b+;a?",
-  ]
-
+  from frontend.simple_test_cases import regexes_with_semicolon
   test_results = {}
-  for test_case in test_cases:
+  for test_case in regexes_with_semicolon:
     print("test case: ", test_case)
     parse_result = reg_exp.parse_string(test_case)
     test_results[test_case] = parse_result[0]
