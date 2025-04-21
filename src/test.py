@@ -12,6 +12,7 @@ from frontend import ast_to_formal_circuit
 from frontend import regex_parser
 from frontend import generate_grep_style
 from frontend import regex_normalizer
+from frontend import simple_test_cases
 import clean
 import path_shortcuts
 
@@ -44,8 +45,7 @@ clean.remove_all_build_content()
 print_green("removed")
 
 
-patterns = ["(a;b|b)*;b;a"]
-# patterns = ["(a;b|b)*;b;a", "b;a+*", "b;a**", "b;a++", "b;a*+"]
+patterns = simple_test_cases.regexes_with_semicolon
 patterns += [regex_normalizer.insert_semicolon_as_concat(
     generate_grep_style.generate_expr(max_depth=6)) for _ in range(3)]
 
