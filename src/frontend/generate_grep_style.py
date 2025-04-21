@@ -59,14 +59,14 @@ def generate_expr(max_depth=3):
     right = generate_expr(max_depth - 1)
     return maybe_wrap(f"{left}{right}", choice)
   elif choice == OperationType.ZER_MOR:
-    inner = generate_expr(max_depth - 1)
-    return maybe_wrap(inner, choice) + "*"
+    inner = generate_expr(max_depth - 1) + "*"
+    return maybe_wrap(inner, choice)
   elif choice == OperationType.ONE_MOR:
-    inner = generate_expr(max_depth - 1)
-    return maybe_wrap(inner, choice) + "+"
+    inner = generate_expr(max_depth - 1)  + "+"
+    return maybe_wrap(inner, choice)
   elif choice == OperationType.ZER_ONE:
-    inner = generate_expr(max_depth - 1)
-    return maybe_wrap(inner, choice) + "?"
+    inner = generate_expr(max_depth - 1)  + "?"
+    return maybe_wrap(inner, choice)
 
 
 def main():
