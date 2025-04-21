@@ -21,6 +21,7 @@ GRN = "\033[32m"
 CYN = "\033[36m"
 DEF = "\033[0m"
 
+
 def main():
   from frontend.simple_test_cases import regexes_with_semicolon
   from frontend.generate_grep_style import generate_expr
@@ -28,11 +29,12 @@ def main():
   # see: https://www.geeksforgeeks.org/python-deleting-all-occurrences-of-character/
   tests = [regex.replace(';', '') for regex in regexes_with_semicolon]
   tests += [generate_expr(max_depth=6) for _ in range(10)]
+  semicolon_inserted = insert_semicolon_as_concat(test)
   for test in tests:
     print(f"grep style: {GRN}{test}{DEF}, semicolon "
-          f"inserted: {CYN}{insert_semicolon_as_concat(test)}{DEF}")
-    regex_pattern_to_ast(insert_semicolon_as_concat(test))
-    
+          f"inserted: {CYN}{semicolon_inserted}{DEF}")
+    regex_pattern_to_ast(semicolon_inserted)
+
 
 if __name__ == "__main__":
   main()
