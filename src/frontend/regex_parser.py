@@ -66,7 +66,7 @@ line_start.add_parse_action(RegexASTNode.reset_class_variables)
 reg_exp = line_start + reg_exp
 
 def regex_pattern_to_ast(pattern: str) -> RegexASTNode:
-  return reg_exp.parse_string(pattern)[0]
+  return reg_exp.parse_string(pattern,parse_all=True)[0]
 
 # for debugging
 if __name__ == "__main__":
@@ -74,7 +74,7 @@ if __name__ == "__main__":
   test_results = {}
   for test_case in regexes_with_semicolon:
     print("test case: ", test_case)
-    parse_result = reg_exp.parse_string(test_case)
+    parse_result = reg_exp.parse_string(test_case,parse_all=True)
     test_results[test_case] = parse_result[0]
 
   trig_E_1 = calculate_trig(
