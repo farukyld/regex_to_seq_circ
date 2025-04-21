@@ -1,27 +1,8 @@
-from enum import Enum, auto
+from frontend.operation_types import OperationType
 
 # I had help from chatGPT to improve this code:
 # https://chatgpt.com/share/6706e5f1-5f24-800f-9901-058cce09d736
 
-
-class OperationType(Enum):
-  # a
-  LITERAL = auto()
-
-  # |
-  UNION = auto()
-
-  # ; as in a;b or None as in ab
-  CONCAT = auto()
-
-  # *
-  ZER_MOR = auto()
-
-  # +
-  ONE_MOR = auto()
-
-  # ?
-  ZER_ONE = auto()
 
 
 class IncorrectInitialization(Exception):
