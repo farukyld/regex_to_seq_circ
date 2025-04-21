@@ -46,6 +46,7 @@ def character_action(tokens_or_ast_nodes):
 
 character_exp = pp.Word(pp.alphanums, exact=1)
 character_exp.add_parse_action(character_action)
+# character_exp.add_parse_action(lambda t: t[0])
 
 union = "|"
 concatenation = ";"
@@ -60,6 +61,15 @@ reg_exp = pp.infix_notation(
     ]
 )
 
+# reg_exp = pp.infix_notation(
+#     character_exp,
+#     [
+#         (repetition, 1, pp.opAssoc.LEFT),
+#         (concatenation, 2, pp.opAssoc.LEFT),
+#         (union, 2, pp.opAssoc.LEFT),
+#     ]
+# )
+
 # see: https://chatgpt.com/share/6707a7b0-3b8c-800f-9754-eb98f105c56f
 line_start = pp.LineStart()
 line_start.add_parse_action(RegexASTNode.reset_class_variables)
@@ -73,9 +83,11 @@ if __name__ == "__main__":
   from frontend.simple_test_cases import regexes_with_semicolon
   test_results = {}
   for test_case in regexes_with_semicolon:
+  # for test_case in ["b;a+*"] + regexes_with_semicolon:
     print("test case: ", test_case)
     # see: https://chatgpt.com/share/6805cea4-1810-800f-bc56-f79c9aca6dd5
     parse_result = reg_exp.parse_string(test_case,parse_all=True)
+    # print("parse result: ", parse_result)
     test_results[test_case] = parse_result[0]
 
   trig_E_1 = calculate_trig(

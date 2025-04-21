@@ -45,6 +45,7 @@ print_green("removed")
 
 
 patterns = ["(a;b|b)*;b;a"]
+# patterns = ["(a;b|b)*;b;a", "b;a+*", "b;a**", "b;a++", "b;a*+"]
 patterns += [regex_normalizer.insert_semicolon_as_concat(
     generate_grep_style.generate_expr(max_depth=6)) for _ in range(3)]
 
