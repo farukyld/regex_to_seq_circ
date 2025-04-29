@@ -1,5 +1,8 @@
 from pathlib import Path
 
+from color_print import introduce
+
+
 MAX_OUTPUTS = 100
 OUTPUTS_PARENT = Path(__file__).parent.parent / "build"
 INTER_OUTPUTS = OUTPUTS_PARENT / "inter"
@@ -47,6 +50,7 @@ def generate_json_output_path() -> Path:
 
 # For testing
 if __name__ == "__main__":
-  generate_sv_output_dir_name().mkdir(exist_ok=True,parents=True)
+  introduce(__file__)
+  generate_sv_output_dir_name().mkdir(exist_ok=True, parents=True)
   print("SV output dir:", generate_sv_output_dir_name())
   print("JSON output path:", generate_json_output_path())

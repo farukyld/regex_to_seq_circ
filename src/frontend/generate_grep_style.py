@@ -6,6 +6,8 @@ import re
 from frontend.operation_types import OperationType
 import string
 
+from color_print import introduce
+
 
 def maybe_wrap(expr, op_type):
   PAREN_PROBABILITIES = {
@@ -69,12 +71,9 @@ def generate_expr(max_depth=3):
     return maybe_wrap(inner, choice)
 
 
-def main():
+if __name__ == "__main__":
+  introduce(__file__)
   for _ in range(10):
     expr = generate_expr()
     print(expr)
     re.compile(expr)
-
-
-if __name__ == "__main__":
-  main()

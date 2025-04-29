@@ -9,6 +9,7 @@ from pycde.circt.dialects import comb
 
 from backend.circuit_deser import CircuitDeser
 from path_shortcuts import TEST_0_JSON_PATH, generate_sv_output_dir_name
+from color_print import introduce
 
 
 @modparams
@@ -65,7 +66,9 @@ def seq_circt_builder(formal_circuit: CircuitDeser):
   return SeqCircuit
 
 
-def main():
+if __name__ == "__main__":
+  introduce(__file__)
+
   # Example usage
   # Instantiate the parametric register with a bit width of 16
   with open(TEST_0_JSON_PATH, "r") as f:
@@ -75,7 +78,3 @@ def main():
   system = System([seq_circt_builder(formal_circuit)], name="seq_circuit",
                   output_directory=output_dir)
   system.compile()
-
-
-if __name__ == "__main__":
-  main()

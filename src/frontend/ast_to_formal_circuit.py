@@ -4,6 +4,7 @@ import json
 
 from path_shortcuts import TEST_0_JSON_PATH
 from frontend.regex_ast_node import OperationType, RegexASTNode
+from color_print import introduce
 
 
 class NotSupportedConversion(Exception):
@@ -111,6 +112,7 @@ def circuit_dict(node: RegexASTNode, full_match=True, regex="") -> str:
 
 # for debugging
 if __name__ == "__main__":
+  introduce(__file__)
   literal1 = RegexASTNode.from_literal('a')
   literal2 = RegexASTNode.from_literal('b')
   literal3 = RegexASTNode.from_literal('b')

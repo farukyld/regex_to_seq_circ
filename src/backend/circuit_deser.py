@@ -2,6 +2,7 @@
 import json
 
 from path_shortcuts import TEST_0_JSON_PATH
+from color_print import introduce
 
 
 class CircuitDeser:
@@ -48,6 +49,7 @@ class CircuitDeser:
 
 
 if __name__ == "__main__":
+  introduce(__file__)
 
   with open(TEST_0_JSON_PATH, "r") as file:
     circuit_info = json.load(file)

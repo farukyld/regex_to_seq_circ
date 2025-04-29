@@ -4,6 +4,7 @@ import shutil
 import sys
 
 from path_shortcuts import OUTPUTS_PARENT, FINAL_OUTPUTS, INTER_OUTPUTS
+from color_print import introduce
 
 
 def remove_final_output_directories():
@@ -30,6 +31,7 @@ def remove_all_build_content(recreate_empty_directories=True):
 
 
 if __name__ == "__main__":
+  introduce(__file__)
   remove_final_output_directories()
   if len(sys.argv) == 1:
     print(f"to clean all build directory content, run:\n"
