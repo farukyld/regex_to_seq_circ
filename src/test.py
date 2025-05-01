@@ -17,6 +17,7 @@ import simple_test_cases
 import clean
 import path_shortcuts
 
+color_print.introduce(__file__)
 color_print.print_cyan("removing all content of build")
 clean.remove_all_build_content()
 color_print.print_green("removed")
