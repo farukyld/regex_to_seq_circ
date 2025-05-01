@@ -4,7 +4,7 @@ import shutil
 import sys
 
 from path_shortcuts import OUTPUTS_PARENT, FINAL_OUTPUTS, INTER_OUTPUTS
-from color_print import introduce
+from color_print import introduce, print_cyan, print_yellow
 
 
 def remove_final_output_directories():
@@ -34,10 +34,10 @@ if __name__ == "__main__":
   introduce(__file__)
   remove_final_output_directories()
   if len(sys.argv) == 1:
-    print(f"to clean all build directory content, run:\n"
+    print_cyan(f"to clean all build directory content, run:\n"
           f"python {__file__} all")
   elif not sys.argv[1] == "all":
-    print(f"argument {sys.argv[1]} is not recognized. did you mean:\n"
+    print_yellow(f"argument {sys.argv[1]} is not recognized. did you mean:\n"
           f"python {__file__} all")
   else:
     remove_all_build_content()
