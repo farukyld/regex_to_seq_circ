@@ -6,7 +6,7 @@ from pycde.signals import BitsSignal
 from pycde import signals
 
 from backend.circuit_deser import CircuitDeser
-from path_shortcuts import TEST_0_JSON_PATH, generate_sv_output_dir_name
+from path_shortcuts import get_any_output_dir_and_json
 from color_print import introduce
 
 
@@ -65,11 +65,10 @@ def seq_circt_builder(_formal_circuit: CircuitDeser):
 
 if __name__ == "__main__":
   introduce(__file__)
-
-  with open(TEST_0_JSON_PATH, "r") as f:
+  output_dir, json_path = get_any_output_dir_and_json()
+  with open(json_path, "r") as f:
     json_obj = json.load(f)
   formal_circuit = CircuitDeser.from_dict(json_obj)
-  output_dir = generate_sv_output_dir_name()
 
   top_module = seq_circt_builder(formal_circuit)
 

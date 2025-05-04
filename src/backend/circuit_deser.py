@@ -1,7 +1,7 @@
 
 import json
 
-from path_shortcuts import TEST_0_JSON_PATH
+from path_shortcuts import get_any_output_dir_and_json
 from color_print import introduce
 
 
@@ -50,7 +50,7 @@ class CircuitDeser:
 
 if __name__ == "__main__":
   introduce(__file__)
-
-  with open(TEST_0_JSON_PATH, "r") as file:
+  _,json_path = get_any_output_dir_and_json()
+  with open(json_path, "r") as file:
     circuit_info = json.load(file)
     circuit_obj = CircuitDeser.from_dict(circuit_info)

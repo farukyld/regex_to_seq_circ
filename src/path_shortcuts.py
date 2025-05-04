@@ -1,56 +1,38 @@
 from pathlib import Path
-
-from color_print import introduce
-
+from typing import Union
 
 MAX_OUTPUTS = 100
 OUTPUTS_PARENT = Path(__file__).parent.parent / "build"
-INTER_OUTPUTS = OUTPUTS_PARENT / "inter"
-FINAL_OUTPUTS = OUTPUTS_PARENT / "final"
-
-TEST_0_JSON_PATH = INTER_OUTPUTS / "circuit_json.json"
-
-INTER_OUTPUTS.mkdir(parents=True, exist_ok=True)
-FINAL_OUTPUTS.mkdir(parents=True, exist_ok=True)
+OUTPUTS_PARENT.mkdir(exist_ok=True, parents=True)
+_JSON_FILE_NAME = "formal.json"
 
 
-def _get_oldest_or_next_output(base_dir: Path, suffix: str = "") -> Path:
+def get_next_output_dir_and_json() -> tuple[Path, Path]:
   """
   Get the next available or oldest reusable output path.
   """
-  candidates = []
+  candidates: list[tuple[float, Path]] = []
   for i in range(1, MAX_OUTPUTS + 1):
-    name = f"output_{i:03d}{suffix}"
-    path = base_dir / name
+    name = f"output_{i:03d}"
+    path = OUTPUTS_PARENT / name
     if not path.exists():
-      return path  # available slot
+      path.mkdir()
+      return path, path / _JSON_FILE_NAME  # available slot
     stat = path.stat()
     candidates.append((stat.st_mtime, path))
 
   # All slots taken — return the oldest one
   candidates.sort()
-  return candidates[0][1]
+  dir_name = candidates[0][1]
+  return dir_name, dir_name / _JSON_FILE_NAME
 
 
-def generate_sv_output_dir_name() -> Path:
+def get_any_output_dir_and_json() -> tuple[Path, Path]:
   """
-  Generate or reuse an output directory under FINAL_OUTPUTS.
+  Return the first existing output directory and its JSON file.
   """
-  path = _get_oldest_or_next_output(FINAL_OUTPUTS)
-  return path
-
-
-def generate_json_output_path() -> Path:
-  """
-  Generate or reuse a JSON file path under INTER_OUTPUTS.
-  """
-  path = _get_oldest_or_next_output(INTER_OUTPUTS, suffix=".json")
-  return path
-
-
-# For testing
-if __name__ == "__main__":
-  introduce(__file__)
-  generate_sv_output_dir_name().mkdir(exist_ok=True, parents=True)
-  print("SV output dir:", generate_sv_output_dir_name())
-  print("JSON output path:", generate_json_output_path())
+  for i in range(1, MAX_OUTPUTS + 1):
+    name = f"output_{i:03d}"
+    path = OUTPUTS_PARENT / name
+    if path.exists():
+      return path, path / _JSON_FILE_NAME

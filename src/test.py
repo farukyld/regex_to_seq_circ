@@ -19,7 +19,7 @@ import path_shortcuts
 
 color_print.introduce(__file__)
 color_print.print_cyan("removing all content of build")
-clean.remove_all_build_content()
+clean.remove_output_directories()
 color_print.print_green("removed")
 
 
@@ -37,7 +37,7 @@ for pattern in patterns:
   circt_dict = ast_to_formal_circuit.circuit_dict(ast_root, False, pattern)
   color_print.print_green("created, serialized")
 
-  json_path = path_shortcuts.generate_json_output_path()
+  output_dir,json_path = path_shortcuts.get_next_output_dir_and_json()
   color_print.print_cyan(
       f"dumping formal definition into {json_path}")
   with open(json_path, "w") as f:
@@ -48,7 +48,6 @@ for pattern in patterns:
   deserialized = circuit_deser.CircuitDeser.from_dict(circt_dict)
   color_print.print_green("deserialized")
 
-  output_dir = path_shortcuts.generate_sv_output_dir_name()
   color_print.print_cyan(
       f"building system verilog output under {output_dir}")
   system = pycde.System([builder.seq_circt_builder(deserialized)], name="seq_circuit",

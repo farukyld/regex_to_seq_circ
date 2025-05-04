@@ -2,7 +2,7 @@
 # see: https://chatgpt.com/share/6709469b-8990-800f-b1c4-9d9d900b7468
 import json
 
-from path_shortcuts import TEST_0_JSON_PATH
+from path_shortcuts import get_any_output_dir_and_json
 from frontend.regex_ast_node import OperationType, RegexASTNode
 from color_print import introduce
 
@@ -123,7 +123,9 @@ if __name__ == "__main__":
   zero_or_more1 = RegexASTNode.from_repetition(union1, '*')
   concat2 = RegexASTNode.from_binary(zero_or_more1, literal4, ';')
   concat3 = RegexASTNode.from_binary(concat2, literal5, ';')
-  with open(TEST_0_JSON_PATH, "w") as file:
+
+  _,json_path = get_any_output_dir_and_json()
+  with open(json_path, "w") as file:
     file.write(json.dumps(circuit_dict(concat3), indent=2))
 
   print("done")
