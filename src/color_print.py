@@ -26,6 +26,12 @@ def print_yellow(*args):
   print(*args)
   print(DEF, end="")
 
+def print_red(*args):
+  print(RED, end="")
+  print(*args)
+  print(DEF, end="")
+
+
 ENABLE_INTRODUCE=True
 def introduce(file_name:str):
   if ENABLE_INTRODUCE:
