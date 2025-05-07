@@ -1,58 +1,48 @@
 // see: https://chatgpt.com/share/68136a46-8298-800f-968c-beab5a84ea0f
 module tb_seq_circt;
 
+  import "DPI-C" function int getchar;
+  import "DPI-C" function int putchar(int c);
+  import "DPI-C" function int eof_stdin();
+
   logic clk, rst;
   logic [7:0] x;
-  logic [7:0] y;
+  logic y;
 
   // File handles
   integer input_file, output_file;
   string input_line;
   int r;
 
-  // Instantiate the DUT
-  seq_circt inst (
+  seq_circuit inst (
     .clk(clk),
     .rst(rst),
-    .x(x),
-    .y(y)
+    .x_i(x),
+    .y_o(y)
   );
 
-  // Clock generation
   always #5 clk = ~clk;
-
-  // File-based stimulus and capture
+  integer i;
   initial begin
-    // Initialize
     clk = 0;
     rst = 1;
-    y = 8'd0;
 
-    // Open files
-    input_file = $fopen("input.txt", "r");
-    output_file = $fopen("output.txt", "w");
-
-    if (input_file == 0 || output_file == 0) begin
-      $display("ERROR: Failed to open file(s).");
-      $finish;
-    end
-
-    // Reset pulse
     #10 rst = 0;
 
-    // Read and feed each char per cycle
-    while (!$feof(input_file)) begin
-      byte c;
-      r = $fread(c, input_file);  // read a single byte
-      y = c;
+    i = 0;
+    // while (i < 10) begin
+    while (!(|eof_stdin())) begin
+    i = i +1;
+    // verilator lint_off WIDTHTRUNC
+      x = getchar();
+    // verilator lint_on WIDTHTRUNC
 
-      @(negedge clk); // take snapshot before next posedge
-      $fwrite(output_file, "%0t: x = %02x\n", $time, x);
+      @(negedge clk);
+      // verilator lint_off IGNOREDRETURN
+      putchar({31'b0,y}+48);
+      // lint_on
     end
 
-    // Finish
-    $fclose(input_file);
-    $fclose(output_file);
     $finish;
   end
 
