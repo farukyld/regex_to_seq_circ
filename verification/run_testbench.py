@@ -1,11 +1,10 @@
 import subprocess
 import sys
-import tempfile
 import random
 import string
 import json
 from pathlib import Path
-from color_print import print_green, print_red, print_yellow,print_cyan
+from color_print import print_green, print_red, print_yellow, print_cyan
 import re2
 from path_shortcuts import get_any_output_dir_and_json
 
@@ -20,12 +19,13 @@ def main():
   # Load regex from json
   with open(json_path, 'r') as f:
     json_obj = json.load(f)
-  regex_pattern = json_obj.get("regex", "")
+  regex_pattern_semicolon_inserted = json_obj.get("regex", "")
+  if not regex_pattern_semicolon_inserted:
+    raise RuntimeError(f"regex field read from {json_path} is empty")
 
   # Paths
   verilog_file = output_dir / "hw/seq_circuit.sv"
   tb_file = Path(__file__).parent / "testbench.sv"
-  dpi_defns = Path(__file__).parent / "dpi_defns.c"
   compile_path = output_dir / "verilator_objdir"
   exec_name = "sim.exe"
   sim_path = output_dir / "sim"
@@ -41,9 +41,9 @@ def main():
       "--Mdir", str(compile_path),
       "--top-module", "tb_seq_circt",
       "-o", str(exec_path),
+      "-O2",
       str(verilog_file),
       str(tb_file),
-      str(dpi_defns),
       # "--trace",  # Optional: for waveform generation
   ]
   print_yellow("running command: ", ' '.join(verilator_cmd))
@@ -52,33 +52,34 @@ def main():
   subprocess.run(verilator_cmd, check=True)
 
   # Generate input
-  # input_str = generate_random_input()
-  input_str = "aaaabaabababa"
+  input_str = generate_random_input(1000)
 
-  f_sim_in = open(input_path, 'w+')
-  f_sim_in.write(input_str)
-  f_sim_in.flush()
-  f_sim_in.seek(0,0)
-  print_cyan(f_sim_in.read())
-  print_cyan(input_str)
-  f_sim_out = open(output_path, "w+")
+  with open(input_path, 'w') as sim_in:
+    sim_in.write(input_str)
 
-  print_yellow("running command: ", ' '.join([str(exec_path)]))
-  sys.stdout.flush()
-  sys.stderr.flush()
-  subprocess.run([str(exec_path)], stdin=f_sim_in,
-                 stdout=f_sim_out, check=True)
-  
-  f_sim_out.flush()
-  sim_output = f_sim_out.read()
-  print_cyan(sim_output)
+  with open(input_path, 'r') as sim_in, open(output_path, 'w') as sim_out:
+    print_yellow("running command: ", ' '.join([str(exec_path)]))
+    sys.stderr.flush()
+    sys.stdout.flush()
+    subprocess.run([str(exec_path)], stdin=sim_in,
+                   stdout=sim_out, check=True)
 
+  with open(output_path, 'r') as sim_out:
+    sim_output = sim_out.read()
+
+  regex_pattern_without_semicolon = str(
+      regex_pattern_semicolon_inserted).replace(';', '')
   # Use RE2 to compute expected output
-  re2_matches = list(re2.finditer(regex_pattern, input_str))
-  re2_output = ''.join('1' if (m.group(0)) else '0'  for m in re2_matches)
+  print_cyan(regex_pattern_without_semicolon)
+
+  import re2_substring_match
+  re2_matches = re2_substring_match.has_match_ending_at_index(
+      input_str, regex_pattern_without_semicolon)
+
+  re2_output = ''.join('1' if m else '0' for m in re2_matches)
 
   # Compare
-  if sim_output.strip() == re2_output.strip():
+  if sim_output.strip().startswith(re2_output.strip()):
     print_green("Output matches expected regex matches.")
     print("input:")
     print(input_str)
