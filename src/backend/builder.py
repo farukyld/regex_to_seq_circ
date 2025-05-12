@@ -1,4 +1,4 @@
-from pycde import Module, Clock, Reset, Output, Input, generator, modparams
+from pycde import module, Module, Clock, Reset, Output, Input, generator, modparams
 from pycde.types import Bits
 from pycde.constructs import Reg, Wire,NamedWire
 from pycde.signals import BitsSignal
@@ -9,7 +9,7 @@ from backend.circuit_deser import CircuitDeser
 
 
 @modparams
-def seq_circt_builder(_formal_circuit: CircuitDeser):
+def _seq_circt_builder(_formal_circuit: CircuitDeser):
   class seq_circuit(Module):
     clk = Clock()
     rst = Reset()
@@ -60,3 +60,7 @@ def seq_circt_builder(_formal_circuit: CircuitDeser):
       state.assign(BitsSignal.concat(transition_functions))
   return seq_circuit
 
+
+def seq_circt_builder(formal_circuit: CircuitDeser):
+  module._MODULE_CACHE.clear()
+  return _seq_circt_builder(formal_circuit)
