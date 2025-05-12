@@ -4,6 +4,9 @@ import random
 import string
 import json
 from pathlib import Path
+
+import re2_substring_match
+
 from util.color_print import print_green, print_red, print_yellow, print_cyan
 from util.path_shortcuts import get_any_output_dir_and_json
 
@@ -58,10 +61,10 @@ def main():
 
   with open(input_path, 'r') as sim_in, open(output_path, 'w') as sim_out:
     print_yellow("running command: ", ' '.join([
-      str(exec_path),
-      f">{output_path}",
-      f"<{input_path}",
-      ]))
+        str(exec_path),
+        f">{output_path}",
+        f"<{input_path}",
+    ]))
     sys.stderr.flush()
     sys.stdout.flush()
     subprocess.run([str(exec_path)], stdin=sim_in,
