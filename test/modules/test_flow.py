@@ -30,7 +30,7 @@ for pattern in patterns:
 
   color_print.print_cyan(
       "creating the formal definition of sequential circuit and serializing")
-  circt_dict = ast_to_formal_circuit.circuit_dict(ast_root, False, pattern)
+  circt_dict = ast_to_formal_circuit.circuit_dict(ast_root, False)
   color_print.print_green("created, serialized")
 
   output_dir, json_path = path_shortcuts.get_next_output_dir_and_json()

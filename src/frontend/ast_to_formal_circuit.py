@@ -74,7 +74,32 @@ def calculate_trig(node: RegexASTNode, h: frozenset[int] = frozenset({0})) -> se
     return calculate_trig(node.left, h)
 
 
-def circuit_dict(node: RegexASTNode, full_match=True, regex="") -> str:
+def generate_regex_from_ast(node: RegexASTNode) -> str:
+  if not isinstance(node,RegexASTNode):
+    raise TypeError("node must be type of RegexASTNode")
+
+  if node.operation == OperationType.LITERAL:
+    return node.char
+  elif node.operation == OperationType.UNION:
+    left_pattern = generate_regex_from_ast(node.left)
+    right_pattern = generate_regex_from_ast(node.right)
+    return "(" + left_pattern + "|" + right_pattern + ")"
+  elif node.operation == OperationType.CONCAT:
+    left_pattern = generate_regex_from_ast(node.left)
+    right_pattern = generate_regex_from_ast(node.right)
+    return left_pattern + ";" + right_pattern
+  elif node.operation == OperationType.ZER_MOR:
+    left_pattern = generate_regex_from_ast(node.left)
+    return left_pattern + "*"
+  elif node.operation == OperationType.ONE_MOR:
+    left_pattern = generate_regex_from_ast(node.left)
+    return left_pattern + "+"
+  elif node.operation == OperationType.ZER_ONE:
+    left_pattern = generate_regex_from_ast(node.left)
+    return left_pattern + "?"
+
+
+def circuit_dict(node: RegexASTNode, full_match=True) -> str:
   if not isinstance(node, RegexASTNode):
     raise TypeError("node must be type of RegexASTNode")
   left_most_leaf = node
@@ -89,6 +114,7 @@ def circuit_dict(node: RegexASTNode, full_match=True, regex="") -> str:
     raise NotSupportedConversion(
         "not should contain the LITERAL at the first position as its left-most children")
 
+  regex = generate_regex_from_ast(node)
   circuit_dict = {
       "regex": regex,
       "n_states": RegexASTNode._literals_created + 1,
