@@ -75,8 +75,11 @@ def main():
   # Use RE2 to compute expected output
   print_cyan(regex_pattern_without_semicolon)
 
-  import re2_substring_match
-  re2_matches = re2_substring_match.has_partial_match_ending_at_index(
+  if json_obj["full_match"] == "true":
+    re2_matches = re2_substring_match.has_full_match_ending_at_index(
+      input_str, regex_pattern_without_semicolon)
+  else:
+    re2_matches = re2_substring_match.has_partial_match_ending_at_index(
       input_str, regex_pattern_without_semicolon)
 
   re2_output = ''.join('1' if m else '0' for m in re2_matches)
