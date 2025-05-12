@@ -92,6 +92,8 @@ def main():
     print(re2_output)
   else:
     print_red("Mismatch between Verilator output and RE2 result.")
+    print("input:")
+    print(input_str)
     print("Verilator output:")
     print(sim_output)
     print("RE2 expected output:")
