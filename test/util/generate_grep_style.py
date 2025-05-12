@@ -6,7 +6,7 @@ import re
 from frontend.operation_types import OperationType
 import string
 
-from color_print import introduce
+from util.color_print import introduce
 
 
 def maybe_wrap(expr, op_type):

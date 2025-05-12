@@ -1,10 +1,7 @@
-# clean.py
-
 import shutil
-import sys
 
-from path_shortcuts import OUTPUTS_PARENT
-from color_print import introduce, print_cyan, print_yellow
+from util.path_shortcuts import OUTPUTS_PARENT
+from util.color_print import introduce
 
 
 def remove_output_directories():

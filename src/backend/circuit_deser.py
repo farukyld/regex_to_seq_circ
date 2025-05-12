@@ -1,10 +1,3 @@
-
-import json
-
-from path_shortcuts import get_any_output_dir_and_json
-from color_print import introduce
-
-
 class CircuitDeser:
   def __init__(self, regex: str, n_states: int, full_match: bool, accept_states: list[int], transitions: list[tuple[int, str, list[int]]]):
     self.regex = regex
@@ -46,11 +39,3 @@ class CircuitDeser:
     ]
 
     return cls(regex, n_states, full_match, accept_states, transition_tuples)
-
-
-if __name__ == "__main__":
-  introduce(__file__)
-  _,json_path = get_any_output_dir_and_json()
-  with open(json_path, "r") as file:
-    circuit_info = json.load(file)
-    circuit_obj = CircuitDeser.from_dict(circuit_info)

@@ -4,9 +4,8 @@ import random
 import string
 import json
 from pathlib import Path
-from color_print import print_green, print_red, print_yellow, print_cyan
-import re2
-from path_shortcuts import get_any_output_dir_and_json
+from util.color_print import print_green, print_red, print_yellow, print_cyan
+from util.path_shortcuts import get_any_output_dir_and_json
 
 
 def generate_random_input(length: int = 100) -> str:
@@ -58,7 +57,11 @@ def main():
     sim_in.write(input_str)
 
   with open(input_path, 'r') as sim_in, open(output_path, 'w') as sim_out:
-    print_yellow("running command: ", ' '.join([str(exec_path)]))
+    print_yellow("running command: ", ' '.join([
+      str(exec_path),
+      f">{output_path}",
+      f"<{input_path}",
+      ]))
     sys.stderr.flush()
     sys.stdout.flush()
     subprocess.run([str(exec_path)], stdin=sim_in,

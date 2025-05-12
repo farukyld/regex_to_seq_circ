@@ -1,10 +1,6 @@
 # ask chatGPT to fix the docstring:
 # see: https://chatgpt.com/share/6709469b-8990-800f-b1c4-9d9d900b7468
-import json
-
-from path_shortcuts import get_any_output_dir_and_json
 from frontend.regex_ast_node import OperationType, RegexASTNode
-from color_print import introduce
 
 
 class NotSupportedConversion(Exception):
@@ -108,24 +104,3 @@ def circuit_dict(node: RegexASTNode, full_match=True, regex="") -> str:
   }
 
   return circuit_dict
-
-
-# for debugging
-if __name__ == "__main__":
-  introduce(__file__)
-  literal1 = RegexASTNode.from_literal('a')
-  literal2 = RegexASTNode.from_literal('b')
-  literal3 = RegexASTNode.from_literal('b')
-  literal4 = RegexASTNode.from_literal('b')
-  literal5 = RegexASTNode.from_literal('a')
-  concat1 = RegexASTNode.from_binary(literal1, literal2, ';')
-  union1 = RegexASTNode.from_binary(concat1, literal3, '|')
-  zero_or_more1 = RegexASTNode.from_repetition(union1, '*')
-  concat2 = RegexASTNode.from_binary(zero_or_more1, literal4, ';')
-  concat3 = RegexASTNode.from_binary(concat2, literal5, ';')
-
-  _,json_path = get_any_output_dir_and_json()
-  with open(json_path, "w") as file:
-    file.write(json.dumps(circuit_dict(concat3), indent=2))
-
-  print("done")

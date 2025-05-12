@@ -1,13 +1,11 @@
-import json
-from pycde import Module, System, Clock, Reset, Output, Input, generator, modparams
+from pycde import Module, Clock, Reset, Output, Input, generator, modparams
 from pycde.types import Bits
 from pycde.constructs import Reg, Wire,NamedWire
 from pycde.signals import BitsSignal
 from pycde import signals
 
 from backend.circuit_deser import CircuitDeser
-from path_shortcuts import get_any_output_dir_and_json
-from color_print import introduce
+
 
 
 @modparams
@@ -62,17 +60,3 @@ def seq_circt_builder(_formal_circuit: CircuitDeser):
       state.assign(BitsSignal.concat(transition_functions))
   return seq_circuit
 
-
-if __name__ == "__main__":
-  introduce(__file__)
-  output_dir, json_path = get_any_output_dir_and_json()
-  with open(json_path, "r") as f:
-    json_obj = json.load(f)
-  formal_circuit = CircuitDeser.from_dict(json_obj)
-
-  top_module = seq_circt_builder(formal_circuit)
-
-  system = System([top_module], name="seq_circuit",
-                  output_directory=output_dir)
-
-  system.compile()

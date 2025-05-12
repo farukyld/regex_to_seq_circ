@@ -4,7 +4,6 @@ from frontend.operation_types import OperationType
 # https://chatgpt.com/share/6706e5f1-5f24-800f-9901-058cce09d736
 
 
-
 class IncorrectInitialization(Exception):
   """
   exception raised when an instance of RegexASTNode

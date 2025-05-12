@@ -9,4 +9,7 @@ setup(
         "pyparsing==3.1.4",
         "pycde==0.6.1",
     ],
+    extras_require={
+        "dev": ["google-re2",],
+    }
 )

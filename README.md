@@ -6,17 +6,16 @@ see: https://github.com/Dragon-Git/pycde_example
 
 ```shell
 pip install -e .
-python src/test.py
-# or
-python -m src.test
-# or to run individual tests
-python -m src.frontend.ast_to_formal_circuit
-python -m src.frontend.generate_grep_style
-python -m src.frontend.operation_types
-python -m src.frontend.regex_ast_node
-python -m src.frontend.regex_normalizer
-python -m src.frontend.regex_parser
 
-python -m src.backend.builder
-python -m src.backend.circuit_deser
+export PYTHONPATH=$(pwd)/test
+
+python test/modules/test_ciruit_deser.py
+python test/modules/test_ast_to_formal_circuit.py  
+python test/modules/test_regex_normalizer.py
+python test/modules/test_builder.py                
+python test/modules/test_regex_parser.py
+python test/modules/test_flow.py
+
+pip install -e .[dev]
+python test/verification/run_testbench.py
 ```

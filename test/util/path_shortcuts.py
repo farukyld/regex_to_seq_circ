@@ -1,8 +1,7 @@
 from pathlib import Path
-from typing import Union
 
 MAX_OUTPUTS = 100
-OUTPUTS_PARENT = Path(__file__).parent.parent / "build"
+OUTPUTS_PARENT = Path(__file__).parent.parent.parent / "build"
 OUTPUTS_PARENT.mkdir(exist_ok=True, parents=True)
 _JSON_FILE_NAME = "formal.json"
 

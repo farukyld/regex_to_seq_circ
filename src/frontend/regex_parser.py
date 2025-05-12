@@ -2,8 +2,6 @@ import pyparsing as pp
 
 from frontend.regex_ast_node import RegexASTNode
 from frontend.ast_to_formal_circuit import calculate_trig
-from simple_test_cases import regexes_with_semicolon
-from color_print import introduce
 
 # see: https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
 
@@ -75,21 +73,3 @@ reg_exp = line_start + reg_exp
 
 def regex_pattern_to_ast(pattern: str) -> RegexASTNode:
   return reg_exp.parse_string(pattern, parse_all=True)[0]
-
-
-# for debugging
-if __name__ == "__main__":
-  introduce(__file__)
-  test_results = {}
-  for test_case in regexes_with_semicolon:
-    print("test case: ", test_case)
-    # see: https://chatgpt.com/share/6805cea4-1810-800f-bc56-f79c9aca6dd5
-    parse_result = reg_exp.parse_string(test_case, parse_all=True)
-    test_results[test_case] = parse_result[0]
-
-  trig_E_1 = calculate_trig(
-      test_results["(a;b|b)*;b;a"], frozenset({1}))
-  trig_E_0 = calculate_trig(
-      test_results["(a;b|b)*;b;a"], frozenset({0}))
-
-  print("done")
