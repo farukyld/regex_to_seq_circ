@@ -8,7 +8,7 @@ from pathlib import Path
 import re2_substring_match
 
 from util.color_print import print_green, print_red, print_yellow, print_cyan
-from util.path_shortcuts import get_any_output_dir_and_json
+from util.path_shortcuts import get_next_existing_output_dir_json_path
 
 
 def generate_random_input(length: int = 100) -> str:
@@ -16,7 +16,7 @@ def generate_random_input(length: int = 100) -> str:
 
 
 def main():
-  output_dir, json_path = get_any_output_dir_and_json()
+  output_dir, json_path = get_next_existing_output_dir_json_path()
 
   # Load regex from json
   with open(json_path, 'r') as f:

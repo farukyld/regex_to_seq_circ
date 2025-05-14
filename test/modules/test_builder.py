@@ -4,13 +4,17 @@ from pycde import System
 
 from backend.builder import seq_circt_builder
 from backend.circuit_deser import CircuitDeser
-from util.path_shortcuts import get_any_output_dir_and_json
-from util.color_print import introduce
+from util.path_shortcuts import get_random_output_dir_json_path
+from util.color_print import introduce, print_red
 
 
 if __name__ == "__main__":
   introduce(__file__)
-  output_dir, json_path = get_any_output_dir_and_json()
+  output_dir, json_path = get_random_output_dir_json_path()
+  if not json_path:
+    print_red("test_builder will work only with an existing json file")
+    exit(1)
+
   with open(json_path, "r") as f:
     json_obj = json.load(f)
   formal_circuit = CircuitDeser.from_dict(json_obj)
