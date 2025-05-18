@@ -21,7 +21,6 @@ def get_next_unused_output_dir_and_json() -> tuple[Path, Path] | tuple[None, Non
     name = f"output_{i:03d}"
     path = OUTPUTS_PARENT / name
     if not path.exists():
-      path.mkdir()
       return path, path / _JSON_FILE_NAME  # available slot
   return None, None
 
