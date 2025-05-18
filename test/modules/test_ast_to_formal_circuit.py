@@ -20,7 +20,8 @@ if __name__ == "__main__":
 
   _, json_path = get_first_existing_output_dir_json_path()
   if not json_path:
-    _, json_path = get_next_unused_output_dir_and_json()
+    odir, json_path = get_next_unused_output_dir_and_json()
+    odir.mkdir()
 
   with open(json_path, "w") as file:
     file.write(json.dumps(circuit_dict(concat3), indent=2))

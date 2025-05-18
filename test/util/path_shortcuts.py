@@ -14,7 +14,7 @@ _LAST_INDEX_FILE = OUTPUTS_PARENT / ".last_index_used.txt"
 
 def get_next_unused_output_dir_and_json() -> tuple[Path, Path] | tuple[None, None]:
   """
-  Return the next unused output directory and its json path.
+  Return the next unused output directory and its json path, creating it is left to caller.
   If all allowed output names (output_xxx) are used, return None,None.
   """
   for i in range(1, MAX_OUTPUTS + 1):

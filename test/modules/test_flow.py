@@ -34,6 +34,7 @@ for pattern in patterns:
   color_print.print_green("created, serialized")
 
   output_dir, json_path = path_shortcuts.get_next_unused_output_dir_and_json()
+  output_dir.mkdir()
   color_print.print_cyan(
       f"dumping formal definition into {json_path}")
   with open(json_path, "w") as f:
