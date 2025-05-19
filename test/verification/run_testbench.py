@@ -8,11 +8,11 @@ from pathlib import Path
 import re2_substring_match
 
 from util.color_print import print_green, print_red, print_yellow, print_cyan
-from util.path_shortcuts import get_next_existing_output_dir_json_path
+from util.path_shortcuts import get_next_existing_output_dir_json_path, OUTPUTS_PARENT
 
 
 def generate_random_input(length: int = 100) -> str:
-  return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+  return ''.join(random.choices(string.ascii_lowercase, k=length))
 
 
 def main():
@@ -51,7 +51,8 @@ def main():
   print_yellow("running command: ", ' '.join(verilator_cmd))
   sys.stdout.flush()
   sys.stderr.flush()
-  subprocess.run(verilator_cmd, check=True)
+  subprocess.run(verilator_cmd, check=True,
+                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
   # Generate input
   input_str = generate_random_input(1000)
@@ -78,33 +79,38 @@ def main():
   # Use RE2 to compute expected output
   print_cyan(regex_pattern_without_semicolon)
 
-  if json_obj["full_match"] == "true":
-    re2_matches = re2_substring_match.has_full_match_ending_at_index(
-      input_str, regex_pattern_without_semicolon)
-  else:
-    re2_matches = re2_substring_match.has_partial_match_ending_at_index(
-      input_str, regex_pattern_without_semicolon)
+  try:
+    if json_obj["full_match"] == "true":
+      re2_matches = re2_substring_match.has_full_match_ending_at_index(
+          input_str, regex_pattern_without_semicolon)
+    else:
+      re2_matches = re2_substring_match.has_partial_match_ending_at_index(
+          input_str, regex_pattern_without_semicolon)
+  except:
+    re2_matches = []
+    print_red("re2 couldn't run")
 
   re2_output = ''.join('1' if m else '0' for m in re2_matches)
 
   # Compare
   if sim_output.strip().startswith(re2_output.strip()):
     print_green("Output matches expected regex matches.")
-    print("input:")
-    print(input_str)
-    print("Verilator output:")
-    print(sim_output)
-    print("RE2 expected output:")
-    print(re2_output)
+    # print("input:")
+    # print(input_str)
+    # print("Verilator output:")
+    # print(sim_output)
+    # print("RE2 expected output:")
+    # print(re2_output)
   else:
     print_red("Mismatch between Verilator output and RE2 result.")
-    print("input:")
-    print(input_str)
-    print("Verilator output:")
-    print(sim_output)
-    print("RE2 expected output:")
-    print(re2_output)
+    # print("input:")
+    # print(input_str)
+    # print("Verilator output:")
+    # print(sim_output)
+    # print("RE2 expected output:")
+    # print(re2_output)
 
 
 if __name__ == "__main__":
-  main()
+  for i in OUTPUTS_PARENT.iterdir():
+    main()

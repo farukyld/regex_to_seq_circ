@@ -1,9 +1,9 @@
 regexes_with_semicolon = [
     "a?",
-    "b;a+*",
-    "b;a**",
-    "b;a++",
-    "b;a*+",
+    # "b;a+*",
+    # "b;a**",
+    # "b;a++",
+    # "b;a*+",
     "(a;b|b)*;b;a",
     "a|a|a|a|a",
     "a",

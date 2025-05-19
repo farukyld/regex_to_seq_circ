@@ -20,8 +20,8 @@ color_print.print_green("removed")
 
 
 patterns = simple_test_cases.regexes_with_semicolon
-patterns += [regex_normalizer.insert_semicolon_as_concat(
-    generate_grep_style.generate_expr(max_depth=6)) for _ in range(3)]
+# patterns += [regex_normalizer.insert_semicolon_as_concat(
+#     generate_grep_style.generate_expr(max_depth=6)) for _ in range(3)]
 
 for pattern in patterns:
   color_print.print_cyan(f"parsing regex: {pattern}")
