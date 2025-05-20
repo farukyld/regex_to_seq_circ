@@ -21,17 +21,17 @@ module tb_seq_circt;
     clk = 0;
     rst = 1;
 
-    #10 rst = 0;
+    #13 rst = 0;
 
     while (!$feof(stdin_fd)) begin
+    @(negedge clk);
     // verilator lint_off WIDTHTRUNC
       x = $fgetc(stdin_fd);
     // verilator lint_on WIDTHTRUNC
 
-      @(negedge clk);
-      // verilator lint_off IGNOREDRETURN
-      $writeb(y);
-      // lint_on
+    // verilator lint_off IGNOREDRETURN
+    #1 $writeb(y);
+    // lint_on
     end
 
     $finish;
