@@ -48,7 +48,8 @@ def main():
       str(tb_file),
       # "--trace",  # Optional: for waveform generation
   ]
-  print_yellow("running command: ", ' '.join(verilator_cmd))
+  print_yellow("running command: ")
+  print(' '.join(verilator_cmd))
   sys.stdout.flush()
   sys.stderr.flush()
   subprocess.run(verilator_cmd, check=True,
@@ -61,10 +62,11 @@ def main():
     sim_in.write(input_str)
 
   with open(input_path, 'r') as sim_in, open(output_path, 'w') as sim_out:
-    print_yellow("running command: ", ' '.join([
+    print_yellow("running command: ")
+    print(' '.join([
         str(exec_path),
-        f">{output_path}",
         f"<{input_path}",
+        f">{output_path}",
     ]))
     sys.stderr.flush()
     sys.stdout.flush()
@@ -109,7 +111,7 @@ def main():
     # print(sim_output)
     # print("RE2 expected output:")
     # print(re2_output)
-
+  print_cyan("------------------------")
 
 if __name__ == "__main__":
   for i in OUTPUTS_PARENT.iterdir():
