@@ -27,16 +27,15 @@ def get_next_unused_output_dir_and_json() -> tuple[Path, Path] | tuple[None, Non
 
 def get_first_existing_output_dir_json_path() -> tuple[Path, Path] | tuple[None, None]:
   """
-  returns output directory and its json path with the smallest timestamp.
+  returns output directory and its json path with the smallest name.
   if no output directory, return None,None.
   """
-  candidates: list[tuple[float, Path]] = []
+  candidates: list[tuple[str, Path]] = []
   for i in range(1, MAX_OUTPUTS + 1):
     name = f"output_{i:03d}"
     path = OUTPUTS_PARENT / name
     if path.exists():
-      stat = path.stat()
-      candidates.append((stat.st_mtime, path))
+      candidates.append((path.stem, path))
 
   # all existing canditates are appended
   candidates.sort()
@@ -47,7 +46,7 @@ def get_first_existing_output_dir_json_path() -> tuple[Path, Path] | tuple[None,
 def get_next_existing_output_dir_json_path() -> tuple[Path, Path]:
   """
   return the directory and its json path whose name comes after saved name. 
-  if there is no such ones, return the ones with the smallest timestamp.
+  if there is no such ones, return the ones with the smallest name.
   """
   try:
     last_index = int(_LAST_INDEX_FILE.read_text().strip())
