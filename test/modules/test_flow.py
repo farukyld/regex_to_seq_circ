@@ -3,6 +3,7 @@
 # to show what comes from where in this file.
 
 import json
+import random
 
 import pycde
 
@@ -30,7 +31,7 @@ for pattern in patterns:
 
   color_print.print_cyan(
       "creating the formal definition of sequential circuit and serializing")
-  circt_dict = ast_to_formal_circuit.circuit_dict(ast_root, False)
+  circt_dict = ast_to_formal_circuit.circuit_dict(ast_root, random.random() > 0.5)
   color_print.print_green("created, serialized")
 
   output_dir, json_path = path_shortcuts.get_next_unused_output_dir_and_json()

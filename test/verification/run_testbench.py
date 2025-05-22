@@ -12,7 +12,8 @@ from util.path_shortcuts import get_next_existing_output_dir_json_path, OUTPUTS_
 
 
 def generate_random_input(length: int = 100) -> str:
-  return ''.join(random.choices(string.ascii_lowercase, k=length))
+  return ''.join(random.choices("abcd", k=length))
+  # return ''.join(random.choices(string.ascii_lowercase, k=length))
 
 
 def main():
@@ -56,6 +57,7 @@ def main():
                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
   # Generate input
+  input_str = generate_random_input()
   input_str = generate_random_input(1000)
 
   with open(input_path, 'w') as sim_in:
@@ -82,7 +84,7 @@ def main():
   print_cyan(regex_pattern_without_semicolon)
 
   try:
-    if json_obj["full_match"] == "true":
+    if json_obj["full_match"]:
       re2_matches = re2_substring_match.has_full_match_ending_at_index(
           input_str, regex_pattern_without_semicolon)
     else:
@@ -91,26 +93,28 @@ def main():
   except:
     re2_matches = []
     print_red("re2 couldn't run")
+  finally:
+    print_cyan("json_obj['full_match']: ", json_obj["full_match"])
 
   re2_output = ''.join('1' if m else '0' for m in re2_matches)
 
   # Compare
   if sim_output.strip().startswith(re2_output.strip()):
     print_green("Output matches expected regex matches.")
-    # print("input:")
-    # print(input_str)
+    print_yellow("input:")
+    print(input_str)
     # print("Verilator output:")
     # print(sim_output)
     # print("RE2 expected output:")
     # print(re2_output)
   else:
     print_red("Mismatch between Verilator output and RE2 result.")
-    # print("input:")
-    # print(input_str)
-    # print("Verilator output:")
-    # print(sim_output)
-    # print("RE2 expected output:")
-    # print(re2_output)
+    print_yellow("input:")
+    print(input_str)
+    print_yellow("Verilator output:")
+    print(sim_output)
+    print_yellow("RE2 expected output:")
+    print(re2_output)
   print_cyan("------------------------")
 
 if __name__ == "__main__":
