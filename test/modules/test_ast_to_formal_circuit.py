@@ -18,6 +18,7 @@ if __name__ == "__main__":
   concat2 = RegexASTNode.from_binary(zero_or_more1, literal4, ';')
   concat3 = RegexASTNode.from_binary(concat2, literal5, ';')
 
+  concat3.pretty_print()
   _, json_path = get_first_existing_output_dir_json_path()
   if not json_path:
     odir, json_path = get_next_unused_output_dir_and_json()

@@ -88,3 +88,14 @@ class RegexASTNode:
     self.position = position
     self.left = left
     self.right = right
+
+  def pretty_print(self, indent: int = 0):
+    prefix = '| ' * indent
+    if self.operation == OperationType.LITERAL:
+      print(f"{prefix}operation: literal: {self.char}")
+    else:
+      print(f"{prefix}operation: {self.operation.name.lower()}")
+      if self.left:
+        self.left.pretty_print(indent + 1)
+      if self.right:
+        self.right.pretty_print(indent + 1)
