@@ -27,4 +27,9 @@ regexes_with_semicolon = [
     "a;b",
     "a;(a|b)*",
     "(a;b|b)*;b+;a?",
+    "(a|b|c)*;(d|e|f)*;(g;h;i)*;j",
+    "(a|b)*;a",
+    "(a|b)*;a;(a|b);(a|b);(a|b);(a|b);(a|b)",
+    "(a|b)*;a;(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b)",
+    "(a|b)*;a;(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b);(a|b)",
 ]
