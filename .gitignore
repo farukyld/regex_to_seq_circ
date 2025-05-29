@@ -3,3 +3,4 @@
 **pycache**
 **/build/**
 **regex_machine.egg-info
+*.elf
