@@ -90,13 +90,13 @@ def generate_regex_from_ast(node: RegexASTNode) -> str:
     return left_pattern + ";" + right_pattern
   elif node.operation == OperationType.ZER_MOR:
     left_pattern = generate_regex_from_ast(node.left)
-    return left_pattern + "*"
+    return "(" + left_pattern + ")*"
   elif node.operation == OperationType.ONE_MOR:
     left_pattern = generate_regex_from_ast(node.left)
-    return left_pattern + "+"
+    return "(" + left_pattern + ")+"
   elif node.operation == OperationType.ZER_ONE:
     left_pattern = generate_regex_from_ast(node.left)
-    return left_pattern + "?"
+    return "(" + left_pattern + ")?"
 
 
 def circuit_dict(node: RegexASTNode, full_match=True) -> str:
