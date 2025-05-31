@@ -39,7 +39,11 @@ int main(int argc, char *argv[])
   if (argc < 2)
   {
     std::cerr << "Usage: " << argv[0]
-              << " <regex> [--max_mem N] [--charset <input alphabet string>]" << std::endl;
+              << " <regex> [--max_mem N]"
+                 " [--charset <input alphabet string>]"
+                 " [--full-match]"
+                 " [--print-match-time]"
+              << std::endl;
     return 1;
   }
 
@@ -49,7 +53,8 @@ int main(int argc, char *argv[])
       "0123456789"
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       "abcdefghijklmnopqrstuvwxyz";
-
+  bool full_match = false;
+  bool print_match_time = false;
   for (int i = 2; i < argc; i++)
   {
     if (strcmp(argv[i], "--max_mem") == 0 && i + 1 < argc)
@@ -62,6 +67,14 @@ int main(int argc, char *argv[])
       charset = std::string(argv[i + 1]);
       i++;
     }
+    else if (strcmp(argv[i], "--full-match") == 0)
+    {
+      full_match = true;
+    }
+    else if (strcmp(argv[i], "--print-match-time") == 0)
+    {
+      print_match_time = true;
+    }
     else
     {
       std::cerr << "Unknown or malformed argument: " << argv[i] << std::endl;
@@ -70,7 +83,6 @@ int main(int argc, char *argv[])
   }
 
   std::string input = generate_random_string(1 << 10, charset);
-
 
   re2::RE2::Options options;
   options.set_never_capture(true);
@@ -84,7 +96,26 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  bool match = re2::RE2::PartialMatch(input, re);
+  auto start = std::chrono::high_resolution_clock::now();
+  volatile bool match;
+  float time_elapsed;
+  if (full_match)
+  {
+    match = re2::RE2::FullMatch(input, re);
+  }
+  else
+  {
+    match = re2::RE2::PartialMatch(input, re);
+  }
+
+  auto end = std::chrono::high_resolution_clock::now();
+
+  if (print_match_time)
+  {
+    std::chrono::duration<float, std::milli> duration = end - start;
+    time_elapsed = duration.count(); // time in milliseconds
+    std::cout << "Match time: " << time_elapsed << " ms" << std::endl;
+  }
 
   return 0;
 }
