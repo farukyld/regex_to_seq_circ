@@ -20,7 +20,8 @@ clean.remove_output_directories()
 color_print.print_green("removed")
 
 
-patterns = simple_test_cases.regexes_with_semicolon
+# patterns = simple_test_cases.health_check
+patterns = simple_test_cases.benchmarking
 # patterns += [regex_normalizer.insert_semicolon_as_concat(
 #     generate_grep_style.generate_expr(max_depth=6)) for _ in range(3)]
 

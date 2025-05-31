@@ -1,5 +1,5 @@
 from frontend.ast_to_formal_circuit import calculate_trig
-from util.simple_test_cases import regexes_with_semicolon
+from util.simple_test_cases import health_check
 from util.color_print import introduce
 from frontend.regex_parser import reg_exp
 
@@ -7,7 +7,7 @@ from frontend.regex_parser import reg_exp
 if __name__ == "__main__":
   introduce(__file__)
   test_results = {}
-  for test_case in regexes_with_semicolon:
+  for test_case in health_check:
     print("test case: ", test_case)
     # see: https://chatgpt.com/share/6805cea4-1810-800f-bc56-f79c9aca6dd5
     parse_result = reg_exp.parse_string(test_case, parse_all=True)
