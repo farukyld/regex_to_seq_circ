@@ -88,7 +88,7 @@ class RegexASTNode:
     self.position = position
     self.left = left
     self.right = right
-
+  # see: https://chatgpt.com/share/683bfa2f-f448-800f-82c6-6007ba68c740
   def pretty_print(self, indent: int = 0):
     prefix = '| ' * indent
     if self.operation == OperationType.LITERAL:
