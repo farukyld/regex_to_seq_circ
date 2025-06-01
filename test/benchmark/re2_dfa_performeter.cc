@@ -6,6 +6,8 @@
 #include <cstring>
 #include <sstream>
 
+// see: https://chatgpt.com/share/683bc89a-b834-800f-a360-0ce44cc621c7
+
 // Simple linear congruential generator
 long int modular_random()
 {
