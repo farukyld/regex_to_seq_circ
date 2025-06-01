@@ -12,7 +12,7 @@ charsets = {
 
 n_values = range(1, 60)
 max_mem_values = np.linspace(90000, 3000, num=90, dtype=int)
-EXECUTABLE = "./re2_dfa_size_est.elf"
+EXECUTABLE = "./re2_dfa_performeter.elf"
 
 results = {label: [] for label in charsets.keys()}
 
