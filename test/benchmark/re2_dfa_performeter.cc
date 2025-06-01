@@ -4,10 +4,12 @@
 #include <string>
 #include <vector>
 #include <cstring>
+#include <sstream>
 
+// Simple linear congruential generator
 long int modular_random()
 {
-  static long int state = -1;
+  static long int state = 123456789; // Updated initial state for determinism
 
   long int a = 1664525;
   long int c = 1013904223;
@@ -18,7 +20,7 @@ long int modular_random()
   return state;
 }
 
-std::string generate_random_string(size_t length, std::string charset)
+std::string generate_random_string(size_t length, const std::string& charset)
 {
   std::string result;
   result.reserve(length);
@@ -34,27 +36,56 @@ int64_t parse_arg(const char *arg)
   return strtoull(arg, nullptr, 0);
 }
 
+void print_help_message(std::string prog_name)
+{
+  std::cerr << "Usage: " << prog_name
+            << " <regex> [--max_mem <N>]"
+               " [--charset <input alphabet>]"
+               " [--input-length <N>]"
+               " [--full-match]"
+               " [--print-match-time]"
+            << std::endl;
+  std::cerr << " or " << std::endl;
+
+  std::cerr << "Usage: " << prog_name
+            << " <regex> [--max_mem <N>]"
+               " [--input-stdin]"
+               " [--full-match]"
+               " [--print-match-time]"
+            << std::endl;
+
+  std::cerr << " or " << std::endl;
+
+  std::cerr << "Usage: " << prog_name << " --help" << std::endl;
+
+  std::cerr << "\nExplanation of flags:\n"
+            << "--max_mem <N>         Maximum memory (in bytes) for RE2 engine.\n"
+            << "--charset <str>       Character set for random input string generation. (input alphabet)\n"
+            << "--input-length <N>    Length of the randomly generated input string.\n"
+            << "--input-stdin         Use standard input as input instead of random.\n"
+            << "--full-match          Use RE2::FullMatch instead of PartialMatch.\n"
+            << "--print-match-time    Print time taken to match the regex.\n";
+}
+
 int main(int argc, char *argv[])
 {
-  if (argc < 2)
+  if (argc < 2 || strcmp(argv[1], "--help") == 0)
   {
-    std::cerr << "Usage: " << argv[0]
-              << " <regex> [--max_mem N]"
-                 " [--charset <input alphabet string>]"
-                 " [--full-match]"
-                 " [--print-match-time]"
-              << std::endl;
+    print_help_message(argv[0]);
     return 1;
   }
 
   std::string regex = argv[1];
   int64_t max_mem = 0x800000;
+  size_t input_length = 1024; // Default to 1 KiB
   std::string charset =
       "0123456789"
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       "abcdefghijklmnopqrstuvwxyz";
   bool full_match = false;
   bool print_match_time = false;
+  bool use_stdin_as_input = false;
+
   for (int i = 2; i < argc; i++)
   {
     if (strcmp(argv[i], "--max_mem") == 0 && i + 1 < argc)
@@ -66,6 +97,14 @@ int main(int argc, char *argv[])
     {
       charset = std::string(argv[i + 1]);
       i++;
+    }
+    else if (strcmp(argv[i], "--input-length") == 0 && i + 1 < argc)
+    {
+      input_length = parse_arg(argv[++i]);
+    }
+    else if (strcmp(argv[i], "--input-stdin") == 0)
+    {
+      use_stdin_as_input = true;
     }
     else if (strcmp(argv[i], "--full-match") == 0)
     {
@@ -82,7 +121,17 @@ int main(int argc, char *argv[])
     }
   }
 
-  std::string input = generate_random_string(1 << 10, charset);
+  std::string input;
+  if (use_stdin_as_input)
+  {
+    std::ostringstream ss;
+    ss << std::cin.rdbuf(); // Read entire stdin buffer
+    input = ss.str();
+  }
+  else
+  {
+    input = generate_random_string(input_length, charset);
+  }
 
   re2::RE2::Options options;
   options.set_never_capture(true);
@@ -97,8 +146,8 @@ int main(int argc, char *argv[])
   }
 
   auto start = std::chrono::high_resolution_clock::now();
+
   volatile bool match;
-  float time_elapsed;
   if (full_match)
   {
     match = re2::RE2::FullMatch(input, re);
@@ -113,8 +162,7 @@ int main(int argc, char *argv[])
   if (print_match_time)
   {
     std::chrono::duration<float, std::milli> duration = end - start;
-    time_elapsed = duration.count(); // time in milliseconds
-    std::cout << "Match time: " << time_elapsed << " ms" << std::endl;
+    std::cout << "Match time: " << duration.count() << " ms" << std::endl;
   }
 
   return 0;
