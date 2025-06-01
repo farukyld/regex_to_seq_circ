@@ -7,7 +7,7 @@
 #include <sstream>
 
 // see: https://chatgpt.com/share/683bc89a-b834-800f-a360-0ce44cc621c7
-
+// see: https://chatgpt.com/share/683bfbfd-3c58-800f-888c-771a30e96b5d
 // Simple linear congruential generator
 long int modular_random()
 {
@@ -147,6 +147,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  // see: https://chatgpt.com/share/683bf991-cbac-800f-b93f-afa92cd2282f
   auto start = std::chrono::high_resolution_clock::now();
 
   volatile bool match;
