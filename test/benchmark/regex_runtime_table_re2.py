@@ -5,16 +5,17 @@ import random
 from collections import defaultdict
 from util import simple_test_cases
 import sys
-EXECUTABLE = "./re2_dfa_performeter.elf"
+from pathlib import Path
+
+EXECUTABLE = Path(__file__).parent / "re2_dfa_performeter.elf"
 
 # Configuration
-input_length = 1_000_000  # 1MB input
-max_mem_values = [50000, 40000, 30000, 20000, 10000]
+input_length = 1_000_000
+max_mem_values = [1000, 2000, 5000, 10000, 30000, 60000]
 alphabets = {
-    "ab": "ab",
-    "a": "a",
     "alphanum": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 }
+minimum_of_how_many_runs = 10
 regexes = simple_test_cases.benchmarking
 compact_forms = simple_test_cases.benchmarking_compact_forms
 
@@ -30,7 +31,7 @@ def generate_random_input(length, charset):
 
 def run_benchmark(regex: str, max_mem: int, input_data: str, full_match=False):
   cmd = [EXECUTABLE, regex,
-         "--max_mem", str(max_mem),
+         "--max-mem", str(max_mem),
          "--input-stdin",
          "--print-match-time"]
   if full_match:
@@ -61,19 +62,24 @@ for alphabet_label, charset in alphabets.items():
   print(f"\n[Alphabet: {alphabet_label}] Generating input...", file=sys.stderr)
   input_data = generate_random_input(input_length, charset)
 
-  for full_match in [False, True]:
+  for full_match in [True]:
     match_mode = "FullMatch" if full_match else "PartialMatch"
-    print(f"\n[Mode: {match_mode}]",file=sys.stderr)
+    print(f"\n[Mode: {match_mode}]", file=sys.stderr)
 
     for regex in regexes:
-      print(f"Regex: {compact_forms[regex]}",file=sys.stderr)
+      print(f"Regex: {compact_forms[regex]}", file=sys.stderr)
       for mem in max_mem_values:
         print(f"Testing max_mem = {mem} bytes...", file=sys.stderr)
-        runtime, fallback = run_benchmark(regex, mem, input_data, full_match)
+        runtime_fallbacks = [run_benchmark(regex, mem, input_data, full_match) for _ in range(minimum_of_how_many_runs)]
+        runtime_fallbacks.sort()
+        runtime, fallback = runtime_fallbacks[0]
         all_results[alphabet_label][full_match][regex][mem] = (
             runtime, fallback)
-        print(
-            f"→ Runtime: {runtime:.2f} ms | Fallback: {'Yes' if fallback else 'No'}", file=sys.stderr)
+        if runtime and int(runtime):
+          print(
+              f"→ Runtime: {runtime:.2f} ms | Fallback: {'Yes' if fallback else 'No'}", file=sys.stderr)
+        else:
+          print("run failed", file=sys.stderr)
 
 
 def print_results(all_results: dict[str, dict[bool, dict[str, dict[int, tuple[int, bool]]]]]):
@@ -100,7 +106,63 @@ def print_results(all_results: dict[str, dict[bool, dict[str, dict[int, tuple[in
         print("\t".join(row))
 
 
+# print("Column headers are max_mem values,"
+#       "row  headers are regexes, "
+#       "cells are runtimes and if nfa fall back occured."
+#       " minimum of runtime_ms' among"
+#       f"{minimum_of_how_many_runs} runs are taken."
+#       f"input length is {input_length}")
+
+# print_results(all_results)
+
+
+
+
+def print_results_as_latex(all_results: dict[str, dict[bool, dict[str, dict[int, tuple[float, bool]]]]]):
+  for alphabet, results_of_alphabet in all_results.items():
+    for full_match, results_of_full_match_of_alphabet in results_of_alphabet.items():
+      match_label = "FullMatch" if full_match else "PartialMatch"
+      print(f"\n% Table for alphabet='{alphabet}', mode='{match_label}'")
+
+      regexes = list(results_of_full_match_of_alphabet.keys())
+      max_mems = sorted(
+          list(next(iter(results_of_full_match_of_alphabet.values())).keys()))
+      col_format = "||p{4cm}" + "|p{1.5cm}" * len(max_mems) + "|"
+      print("\\begin{table}[ht]")
+      print("\\centering")
+
+      print(f"\\begin{{tabular}}{{{col_format}}}")
+      print("\\hline")
+      header = ["Regex \\textbackslash{} MaxMem kB"] + [str(m//1000) for m in max_mems]
+      print(" & ".join(header) + " \\\\")
+      print("\\hline")
+
+      for regex in regexes:
+        # -replace "{", "\{" -replace "}", "\}" -replace "_", "\_"  -replace "\|", "\textbar{}"
+        row_label = compact_forms.get(regex, regex).replace("{","\{").replace("}","\}").\
+        replace('_', '\\_').replace("|","\\textbar{}")
+        row = [row_label]
+        for mem in max_mems:
+          runtime_ms, fallback = results_of_full_match_of_alphabet[regex].get(
+              mem, (None, None))
+          if runtime_ms is None:
+            cell = "--"
+          else:
+            rate_Mhz = (input_length / runtime_ms) / 1e3
+            cell = f"{rate_Mhz:.2f} MHz"
+          row.append(cell)
+        print(" & ".join(row) + " \\\\")
+      print("\\hline")
+      print("\\end{tabular}")
+      print(
+      f"\\caption{{Char consumption rate (MHz) for alphabet=\\texttt{{{alphabet}}}, mode={match_label}}}")
+      print("\\end{table}\n")
+
 print("Column headers are max_mem values,"
       "row  headers are regexes, "
-      "cells are runtimes and if nfa fall back occured. ")
-print_results(all_results)
+      "cells are speed."
+      " minimum of runtime_ms' among "
+      f"{minimum_of_how_many_runs} runs are taken."
+      f" input length is {input_length}")
+
+print_results_as_latex(all_results)

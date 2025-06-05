@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 
   for (int i = 2; i < argc; i++)
   {
-    if (strcmp(argv[i], "--max_mem") == 0 && i + 1 < argc)
+    if (strcmp(argv[i], "--max-mem") == 0 && i + 1 < argc)
     {
       max_mem = parse_arg(argv[i + 1]);
       i++;
@@ -102,7 +102,8 @@ int main(int argc, char *argv[])
     }
     else if (strcmp(argv[i], "--input-length") == 0 && i + 1 < argc)
     {
-      input_length = parse_arg(argv[++i]);
+      input_length = parse_arg(argv[i + 1]);
+      i++;
     }
     else if (strcmp(argv[i], "--input-stdin") == 0)
     {
@@ -132,7 +133,11 @@ int main(int argc, char *argv[])
   }
   else
   {
+    auto start = std::chrono::high_resolution_clock::now();
     input = generate_random_string(input_length, charset);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float, std::milli> duration = end - start;
+    std::cerr << "input generation time: " << duration.count() << " ms" << std::endl;
   }
 
   re2::RE2::Options options;
