@@ -22,7 +22,7 @@ def main():
   # Load regex from json
   with open(json_path, 'r') as f:
     json_obj = json.load(f)
-  regex_pattern_semicolon_inserted = json_obj.get("regex", "")
+  regex_pattern_semicolon_inserted = json_obj.get("regex_canonical", "")
   if not regex_pattern_semicolon_inserted:
     raise RuntimeError(f"regex field read from {json_path} is empty")
 

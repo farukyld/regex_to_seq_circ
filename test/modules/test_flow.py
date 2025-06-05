@@ -11,7 +11,7 @@ from backend import builder
 from backend import circuit_deser
 from frontend import ast_to_formal_circuit
 from frontend import regex_parser
-from util import generate_grep_style, color_print, clean, path_shortcuts, simple_test_cases
+from util import generate_grep_style, color_print, clean, path_shortcuts, simple_test_cases, move_build_params_to_hw
 from frontend import regex_normalizer
 
 color_print.introduce(__file__)
@@ -54,6 +54,7 @@ for pattern in patterns:
     system = pycde.System([builder.seq_circt_builder(deserialized)], name="seq_circuit",
                             output_directory=output_dir)
     system.compile()
+    move_build_params_to_hw.move_build_params_from_json_to_sv_in_output_directory(output_dir)
     color_print.print_green("built")
     color_print.print_green("----\n"
                             "done")

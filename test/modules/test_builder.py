@@ -4,6 +4,7 @@ from pycde import System
 
 from backend.builder import seq_circt_builder
 from backend.circuit_deser import CircuitDeser
+from util.move_build_params_to_hw import move_build_params_from_json_to_sv_in_output_directory
 from util.path_shortcuts import get_random_output_dir_json_path
 from util.color_print import introduce, print_red
 
@@ -25,3 +26,4 @@ if __name__ == "__main__":
                   output_directory=output_dir)
 
   system.compile()
+  move_build_params_from_json_to_sv_in_output_directory(output_dir)

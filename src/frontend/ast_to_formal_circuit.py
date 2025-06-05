@@ -116,7 +116,7 @@ def circuit_dict(node: RegexASTNode, full_match=True) -> str:
 
   regex = generate_regex_from_ast(node)
   circuit_dict = {
-      "regex": regex,
+      "regex_canonical": regex,
       "n_states": RegexASTNode._literals_created + 1,
       "full_match": full_match,
       "accept_states": list(calculate_out(node)),

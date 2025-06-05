@@ -26,7 +26,7 @@ class CircuitDeser:
     #         } for i, a, h in self.trig
     #     ]
     # }
-    regex: str = json_obj["regex"]
+    regex: str = json_obj["regex_canonical"]
     n_states: int = json_obj["n_states"]
     full_match: bool = json_obj["full_match"]
     accept_states: list[int] = json_obj["accept_states"]
